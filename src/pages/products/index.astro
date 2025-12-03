@@ -1,142 +1,362 @@
 ---
-// Importing necessary components
 import MainLayout from "@/layouts/MainLayout.astro";
-import PrimaryCTA from "@components/ui/buttons/PrimaryCTA.astro";
-import CardSmall from "@components/ui/cards/CardSmall.astro";
-import CardWide from "@components/ui/cards/CardWide.astro";
-import FeaturesStatsAlt from "@components/sections/features/FeaturesStatsAlt.astro";
-import TestimonialsSectionAlt from "@components/sections/testimonials/TestimonialsSectionAlt.astro";
-
-// Importing necessary functions from Astro
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import { SITE } from "@data/constants";
 
-// Fetching all the product related content and sorting it by main.id
-const product: CollectionEntry<"products">[] = (
-  await getCollection("products", ({ id }) => {
-    return id.startsWith("en/");
-  })
-).sort(
-  (a: CollectionEntry<"products">, b: CollectionEntry<"products">) =>
-    a.data.main.id - b.data.main.id
-);
-
-// Define variables for page content
-const title: string = "Products";
-const subTitle: string =
-  "Explore the durability and precision of ScrewFast tools, designed for both professionals and enthusiasts. Each of our products is crafted with precision and built to last, ensuring you have the right tool for every job.";
-
-// Testimonial data that will be rendered in the component
-const testimonials = [
-  // First testimonial data
-  {
-    content:
-      " \"Since switching to ScrewFast's hardware tools, the efficiency on our construction sites has skyrocketed. The durability of the hex bolts and precision of the machine screws are simply unmatched. It's refreshing to work with a company that truly understands the daily demands of the industry.\" ",
-    author: "Jason Clark",
-    role: "Site Foreman | TopBuild",
-    avatarSrc:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
-    avatarAlt: "Image Description",
-  },
-  // Second testimonial data
-  {
-    content:
-      " \"As an interior designer, I'm always looking for high-quality materials and tools that help bring my visions to life. ScrewFast's mixed screws assortment has been a game-changer for my projects, providing the perfect blend of quality and variety. The outstanding customer support was just the cherry on top!\" ",
-    author: "Maria Gonzalez",
-    role: "Interior Designer | Creative Spaces",
-    avatarSrc:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1376&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
-    avatarAlt: "Image Description",
-  },
-  // Third testimonial data
-  {
-    content:
-      " \"I've been a professional carpenter for over 15 years, and I can sincerely say that ScrewFast's tap bolts and nuts are some of the best I've used. They grip like no other, and I have full confidence in every joint and fixture. Plus, the service is impeccable – they truly care about my project's success.\" ",
-    author: "Richard Kim",
-    role: "Master Carpenter | WoodWright",
-    avatarSrc:
-      "https://images.unsplash.com/photo-1474176857210-7287d38d27c6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
-    avatarAlt: "Image Description",
-  },
-];
-
-const pageTitle: string = `Products | ${SITE.title}`;
-const metaDescription =
-  "Explore the durability and precision of ScrewFast tools, designed for both professionals and enthusiasts.";
-const ogTitle = "Hardware Tools | ScrewFast";
+const pageTitle = "Armada & Produk | RentHeavyPro";
 ---
 
-<MainLayout
-  title={pageTitle}
-  customDescription={metaDescription}
-  customOgTitle={ogTitle}
-  structuredData={{
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": "https://screwfast.uk/products",
-    url: "https://screwfast.uk/products",
-    name: "Hardware Tools | ScrewFast",
-    description:
-      "Explore the durability and precision of ScrewFast tools, designed for both professionals and enthusiasts.",
-    isPartOf: {
-      "@type": "WebSite",
-      url: "https://screwfast.uk",
-      name: "ScrewFast",
-      description:
-        "ScrewFast offers top-tier hardware tools and expert construction services to meet all your project needs.",
-    },
-    inLanguage: "en-US",
-  }}
->
-  <div
-    class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 2xl:max-w-full"
-  >
-    <div class="mb-4 flex items-center justify-between gap-8 sm:mb-8 md:mb-12">
-      <div class="flex items-center gap-12">
-        <h1
-          class="text-2xl font-bold tracking-tight text-balance text-neutral-800 md:text-4xl md:leading-tight dark:text-neutral-200"
-        >
-          {title}
-        </h1>
-        {
-          subTitle && (
-            <p class="hidden max-w-(--breakpoint-sm) text-pretty text-neutral-600 md:block dark:text-neutral-400">
-              {subTitle}
-            </p>
-          )
-        }
-      </div>
-      <PrimaryCTA title="Customer Stories" url="#testimonials" noArrow={true} />
+<MainLayout title={pageTitle}>
+  <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+    <div class="mb-10 max-w-2xl text-center lg:mb-14">
+      <h2 class="text-2xl font-bold md:text-4xl md:leading-tight text-gray-800 dark:text-white">
+        Pilihan Armada Kami
+      </h2>
+      <p class="mt-1 text-gray-600 dark:text-gray-400">
+        Unit terawat, siap kerja, dan harga kompetitif. Pilih unit Anda sekarang.
+      </p>
     </div>
-    {/* Displaying products in alternating styles. Alternative product gets different card styling.
-    Maps through all product entries and displays them with either CardSmall or CardWide based on their position. */}
-    <section class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 xl:gap-8">
-      {
-        product.map((product, index) => {
-          const position = index % 4;
-          if (position === 0 || position === 3) {
-            return <CardSmall product={product} />;
-          } else {
-            return <CardWide product={product} />;
-          }
-        })
-      }
-    </section>
+
+    <div id="productGrid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="col-span-full text-center py-10 text-gray-500">Memuat data armada terbaru...</div>
+    </div>
   </div>
-  {/* Features statistics section */}
-  <FeaturesStatsAlt
-    title="Why Choose ScrewFast?"
-    subTitle="Transform your ideas into tangible results with ScrewFast tools. Whether you're starting with a sketch on a napkin or diving into a comprehensive construction project, our tools are engineered to help you build with confidence."
-    benefits={[
-      "Robust and reliable tools for long-lasting performance.",
-      "Innovative solutions tailored to modern construction needs.",
-      "Customer support dedicated to your project's success.",
-    ]}
-  />
-  {/* Testimonials section */}
-  <TestimonialsSectionAlt
-    title="What Our Customers Say"
-    testimonials={testimonials}
-  />
+
+  <div id="paymentModal" class="fixed inset-0 z-[999] hidden bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-lg rounded-xl bg-white shadow-2xl dark:bg-neutral-900 border dark:border-neutral-700 flex flex-col max-h-[90vh]">
+      
+      <div class="border-b px-6 py-4 flex justify-between items-center bg-orange-600 rounded-t-xl">
+        <h3 class="text-lg font-bold text-white">Formulir Sewa</h3>
+        <button id="closeModal" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6">
+        
+        <div class="flex items-center gap-4 p-3 bg-gray-50 dark:bg-neutral-800 rounded-lg border border-gray-200 dark:border-neutral-700">
+           <div id="modalImg" class="text-4xl">🚜</div>
+           <div>
+              <h4 id="modalProdName" class="font-bold text-gray-800 dark:text-white text-lg">Nama Alat</h4>
+              <p id="modalPrice" class="text-orange-600 font-semibold text-sm">Rp 0</p>
+              <input type="hidden" id="modalPriceRaw">
+           </div>
+        </div>
+
+        <div class="flex justify-between text-xs font-bold text-gray-400 border-b pb-2 dark:border-neutral-700">
+           <span id="stepLabel1" class="text-blue-600">1. Data Sewa</span>
+           <span id="stepLabel2">2. Dokumen</span>
+           <span id="stepLabel3">3. Pembayaran</span>
+        </div>
+
+        <div id="step1" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium dark:text-gray-300 mb-1">Nama Penyewa / Perusahaan</label>
+            <input type="text" id="inputNama" class="w-full border p-2.5 rounded-lg dark:bg-neutral-800 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none">
+          </div>
+          
+          <div>
+             <label class="block text-sm font-medium dark:text-gray-300 mb-1">Lokasi Proyek</label>
+             <textarea id="inputAddress" rows="2" class="w-full border p-2.5 rounded-lg dark:bg-neutral-800 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+               <label class="block text-sm font-medium dark:text-gray-300 mb-1">Mulai Tanggal</label>
+               <input type="date" id="inputDate" class="w-full border p-2.5 rounded-lg dark:bg-neutral-800 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none">
+            </div>
+            <div>
+               <label class="block text-sm font-medium dark:text-gray-300 mb-1">Durasi</label>
+               <input type="number" id="inputDurasi" min="1" value="1" class="w-full border p-2.5 rounded-lg dark:bg-neutral-800 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none">
+            </div>
+          </div>
+
+          <div>
+             <label class="block text-sm font-medium dark:text-gray-300 mb-1">Pilih Paket Sewa</label>
+             <select id="inputUnitType" class="w-full border p-2.5 rounded-lg bg-orange-50 dark:bg-neutral-800 font-bold text-orange-900 dark:text-orange-400 border-orange-200 focus:ring-2 focus:ring-orange-500">
+                <option value="hari">📅 Harian (Harga Normal)</option>
+                <option value="bulan">🗓️ Bulanan (Diskon 10%)</option>
+                <option value="tahun">📆 Tahunan (Diskon 20%)</option>
+             </select>
+          </div>
+
+          <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded text-right">
+             <p class="text-xs text-gray-500 dark:text-gray-400">Total Estimasi:</p>
+             <span id="totalTagihan" class="text-xl font-bold text-blue-700 dark:text-blue-400">Rp 0</span>
+             <p id="discountInfo" class="text-xs text-green-600 font-bold hidden">Hemat: Rp 0</p>
+          </div>
+
+          <button id="btnToStep2" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Lanjut: Upload Dokumen</button>
+        </div>
+
+        <div id="step2" class="hidden space-y-4">
+          <div class="bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded border border-yellow-200 dark:border-yellow-700 text-sm text-yellow-800 dark:text-yellow-200">
+             ⚠️ Wajib upload <b>SIM B2 Umum</b> atau <b>SIO</b> yang berlaku.
+          </div>
+          <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 p-8 rounded-lg text-center bg-gray-50 dark:bg-neutral-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-700 transition relative">
+             <input type="file" id="inpFile" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,.pdf">
+             <div id="filePreviewText">
+                <span class="text-4xl">📂</span>
+                <p class="text-sm mt-2 font-bold text-gray-600 dark:text-gray-300">Klik Upload File</p>
+                <p class="text-xs text-gray-400">JPG, PNG, PDF (Max 5MB)</p>
+             </div>
+          </div>
+          <div class="flex gap-2">
+             <button onclick="showStep(1)" class="w-1/3 bg-gray-200 dark:bg-neutral-700 text-gray-700 dark:text-white font-bold py-3 rounded-lg">Kembali</button>
+             <button id="btnToStep3" class="w-2/3 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">Lanjut Bayar</button>
+          </div>
+        </div>
+
+        <div id="step3" class="hidden space-y-4">
+           <h4 class="font-bold text-gray-700 dark:text-white">Pilih Metode Pembayaran</h4>
+           <div class="grid grid-cols-2 gap-3">
+              <button class="pay-method border dark:border-neutral-600 p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-neutral-800 flex items-center gap-2" data-bank="BCA">
+                 <span class="font-bold text-blue-800 dark:text-blue-400">BCA</span> <span class="text-xs text-gray-500">Virtual Acc</span>
+              </button>
+              <button class="pay-method border dark:border-neutral-600 p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-neutral-800 flex items-center gap-2" data-bank="MANDIRI">
+                 <span class="font-bold text-yellow-600">MANDIRI</span> <span class="text-xs text-gray-500">Bill</span>
+              </button>
+              <button class="pay-method border dark:border-neutral-600 p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-neutral-800 flex items-center gap-2" data-bank="BRI">
+                 <span class="font-bold text-blue-900 dark:text-blue-500">BRI</span> <span class="text-xs text-gray-500">BRIVA</span>
+              </button>
+              <button class="pay-method border dark:border-neutral-600 p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-neutral-800 flex items-center gap-2" data-bank="QRIS">
+                 <span class="font-bold text-gray-800 dark:text-white">QRIS</span> <span class="text-xs text-gray-500">Scan</span>
+              </button>
+           </div>
+           <button onclick="showStep(2)" class="w-full bg-gray-200 dark:bg-neutral-700 text-gray-700 dark:text-white font-bold py-3 rounded-lg mt-4">Kembali</button>
+        </div>
+
+        <div id="step4" class="hidden text-center space-y-6">
+           <div id="loadingSpinner" class="py-10">
+              <div class="animate-spin text-5xl mb-4">🔄</div>
+              <p class="font-bold text-gray-600 dark:text-gray-300">Menghubungkan ke Bank...</p>
+           </div>
+
+           <div id="vaDisplay" class="hidden">
+              <p class="text-gray-500 dark:text-gray-400 mb-2">Kode Bayar / Virtual Account:</p>
+              <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-6 rounded-xl">
+                 <p class="text-sm font-bold text-blue-800 dark:text-blue-300 mb-1" id="bankLabel">BANK BCA</p>
+                 <h2 class="text-3xl font-mono font-bold tracking-wider text-gray-800 dark:text-white" id="vaNumber">...</h2>
+              </div>
+              
+              <button id="btnSimulatePay" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 shadow-lg animate-pulse mt-6">
+                 🟢 Simulasi: Saya Sudah Bayar
+              </button>
+           </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. LOAD DATA DARI ADMIN ---
+    const defaultProducts = [
+      { id: 1, name: "Machine Screws (Default)", price: 150000, stock: 50, image: "🚜" },
+      { id: 2, name: "Assorted Screw Set", price: 350000, stock: 20, image: "🏗️" },
+      { id: 3, name: "Tap Bolt and Nuts Set", price: 120000, stock: 100, image: "🔩" },
+      { id: 4, name: "Hex Box", price: 500000, stock: 15, image: "📦" },
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const dbProducts = JSON.parse(localStorage.getItem('db_products')) || defaultProducts;
+      const grid = document.getElementById('productGrid');
+      
+      // Helper Link Detail
+      const getLink = (id) => {
+        if(id === 1) return "/products/item-t845";
+        if(id === 2) return "/products/item-a765";
+        if(id === 3) return "/products/item-b203";
+        if(id === 4) return "/products/item-f303";
+        return `/products/item-t845?custom_id=${id}`;
+      };
+
+      // Helper Gambar
+      const getImageHTML = (imgCode) => {
+         if (!imgCode) return `<div class="text-6xl">📦</div>`;
+         if (imgCode.length < 5) return `<div class="text-6xl">${imgCode}</div>`; 
+         return `<img src="${imgCode}" class="w-full h-full object-cover">`; 
+      };
+
+      // Render Grid
+      if (grid) {
+        grid.innerHTML = dbProducts.map(p => `
+          <div class="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 hover:shadow-lg transition">
+            <div class="h-52 flex flex-col justify-center items-center bg-gray-100 rounded-t-xl dark:bg-neutral-800 text-6xl overflow-hidden relative">
+              ${getImageHTML(p.image)}
+            </div>
+            <div class="p-5">
+              <div class="flex justify-between items-start">
+                <div>
+                   <a href="${getLink(p.id)}" class="block">
+                     <h3 class="text-xl font-bold text-gray-800 dark:text-white hover:text-orange-600 transition cursor-pointer">${p.name}</h3>
+                   </a>
+                   <p class="text-sm text-gray-500 mt-1">Stok: <span class="font-bold ${p.stock > 0 ? 'text-green-600' : 'text-red-600'}">${p.stock}</span></p>
+                </div>
+              </div>
+              <div class="mt-4">
+                 <p class="text-xs text-gray-500">Harga Sewa Harian</p>
+                 <p class="text-2xl font-bold text-orange-600">Rp ${parseInt(p.price).toLocaleString('id-ID')}</p>
+              </div>
+            </div>
+            <div class="mt-auto p-5 border-t border-gray-100 dark:border-neutral-800">
+              <button onclick="openSewaModal('${p.name}', ${p.price}, '${p.image ? p.image.replace(/'/g, "\\'") : "📦"}')" 
+                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-bold rounded-lg border border-transparent bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:bg-white dark:text-neutral-800 dark:hover:bg-gray-200 transition"
+                ${p.stock <= 0 ? 'disabled' : ''}>
+                ${p.stock > 0 ? 'Sewa Sekarang' : 'Stok Habis'}
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    });
+
+    // --- 2. LOGIKA MODAL (STEPS) ---
+    const modal = document.getElementById('paymentModal');
+    const modalPriceRaw = document.getElementById('modalPriceRaw');
+    const inputDurasi = document.getElementById('inputDurasi');
+    const inputUnitType = document.getElementById('inputUnitType');
+    const totalTagihan = document.getElementById('totalTagihan');
+    const discountInfo = document.getElementById('discountInfo');
+
+    // Navigation Helper
+    window.showStep = (num) => {
+       [1,2,3,4].forEach(n => document.getElementById(`step${n}`).classList.add('hidden'));
+       document.getElementById(`step${num}`).classList.remove('hidden');
+       
+       [1,2,3].forEach(n => document.getElementById(`stepLabel${n}`).classList.remove('text-blue-600', 'underline'));
+       if(num <= 3) document.getElementById(`stepLabel${num}`).classList.add('text-blue-600', 'underline');
+    };
+
+    // Buka Modal
+    window.openSewaModal = (name, price, img) => {
+      document.getElementById('modalProdName').innerText = name;
+      document.getElementById('modalPrice').innerText = `Rp ${parseInt(price).toLocaleString('id-ID')} / hari`;
+      modalPriceRaw.value = price;
+      
+      const imgEl = document.getElementById('modalImg');
+      if(img && img.length < 5) {
+         imgEl.innerHTML = img; 
+         imgEl.className = "text-4xl";
+      } else if (img) {
+         imgEl.innerHTML = `<img src="${img}" class="w-16 h-16 object-cover rounded">`;
+         imgEl.className = "";
+      } else {
+         imgEl.innerHTML = "📦";
+      }
+      
+      // Reset
+      inputDurasi.value = 1;
+      inputUnitType.value = "hari";
+      calculateTotal();
+      window.showStep(1);
+      modal.classList.remove('hidden');
+    };
+
+    document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+
+    // Hitung Total + Diskon
+    function calculateTotal() {
+       const duration = parseInt(inputDurasi.value) || 1;
+       const basePrice = parseInt(modalPriceRaw.value) || 0;
+       const unitType = inputUnitType.value;
+       
+       let total = 0;
+       let originalTotal = 0;
+
+       if (unitType === 'hari') {
+          total = basePrice * duration;
+          originalTotal = total;
+          discountInfo.classList.add('hidden');
+       } 
+       else if (unitType === 'bulan') {
+          originalTotal = (basePrice * 30) * duration;
+          total = originalTotal * 0.9; // Diskon 10%
+          discountInfo.innerText = `Hemat: Rp ${(originalTotal - total).toLocaleString('id-ID')} (Diskon 10%)`;
+          discountInfo.classList.remove('hidden');
+       } 
+       else if (unitType === 'tahun') {
+          originalTotal = (basePrice * 365) * duration;
+          total = originalTotal * 0.8; // Diskon 20%
+          discountInfo.innerText = `Hemat: Rp ${(originalTotal - total).toLocaleString('id-ID')} (Diskon 20%)`;
+          discountInfo.classList.remove('hidden');
+       }
+
+       totalTagihan.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+    }
+
+    inputDurasi.addEventListener('input', calculateTotal);
+    inputUnitType.addEventListener('change', calculateTotal);
+
+    // Step 1 -> 2
+    document.getElementById('btnToStep2').addEventListener('click', () => {
+       const nama = document.getElementById('inputNama').value;
+       const addr = document.getElementById('inputAddress').value;
+       const date = document.getElementById('inputDate').value;
+       if(!nama || !addr || !date) { alert("Lengkapi data sewa!"); return; }
+       window.showStep(2);
+    });
+
+    // Step 2 -> 3 (Upload)
+    let uploadedFileName = "";
+    document.getElementById('inpFile').addEventListener('change', function() {
+       if(this.files && this.files[0]) {
+          uploadedFileName = this.files[0].name;
+          document.getElementById('filePreviewText').innerHTML = `<span class="text-4xl text-green-500">✅</span><p class="font-bold">${uploadedFileName}</p>`;
+       }
+    });
+
+    document.getElementById('btnToStep3').addEventListener('click', () => {
+       if(!uploadedFileName) { alert("Wajib Upload Dokumen!"); return; }
+       window.showStep(3);
+    });
+
+    // Step 3 -> 4 (Pilih Bank)
+    document.querySelectorAll('.pay-method').forEach(btn => {
+       btn.addEventListener('click', () => {
+          const bank = btn.getAttribute('data-bank');
+          window.showStep(4);
+          
+          document.getElementById('loadingSpinner').classList.remove('hidden');
+          document.getElementById('vaDisplay').classList.add('hidden');
+
+          setTimeout(() => {
+             document.getElementById('loadingSpinner').classList.add('hidden');
+             document.getElementById('vaDisplay').classList.remove('hidden');
+             const randomVA = Math.floor(Math.random() * 1000000000000);
+             document.getElementById('bankLabel').innerText = `BANK ${bank} Virtual Account`;
+             document.getElementById('vaNumber').innerText = `880${randomVA}`;
+          }, 1500);
+       });
+    });
+
+    // FINAL: Simpan Pesanan
+    document.getElementById('btnSimulatePay').addEventListener('click', () => {
+       const orders = JSON.parse(localStorage.getItem('db_orders')) || [];
+       
+       const unitType = inputUnitType.value;
+       const duration = inputDurasi.value;
+       const finalTotal = parseInt(totalTagihan.innerText.replace(/\D/g, ''));
+       
+       // Format Durasi agar Admin paham (misal "2 Bulan")
+       const durationLabel = `${duration} ${unitType.charAt(0).toUpperCase() + unitType.slice(1)}`;
+
+       const newOrder = {
+          id: "ORD-" + Date.now(),
+          customerName: document.getElementById('inputNama').value,
+          projectLoc: document.getElementById('inputAddress').value,
+          item: document.getElementById('modalProdName').innerText,
+          duration: durationLabel,
+          total: finalTotal,
+          date: new Date().toLocaleString('id-ID'),
+          docName: uploadedFileName,
+          status: 'PAID_VERIFY'
+       };
+       
+       orders.push(newOrder);
+       localStorage.setItem('db_orders', JSON.stringify(orders));
+
+       alert('✅ Pembayaran Berhasil! Menunggu Verifikasi Admin.');
+       modal.classList.add('hidden');
+       window.location.reload();
+    });
+
+  </script>
 </MainLayout>

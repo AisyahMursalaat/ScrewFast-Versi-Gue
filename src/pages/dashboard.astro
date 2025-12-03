@@ -1,0 +1,78 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout title="Dashboard Customer">
+  <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8">
+    
+    <div class="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
+       <div>
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Akun Saya</h1>
+          <p class="text-gray-500">Riwayat Pesanan & Status Sewa</p>
+       </div>
+       <button id="logoutBtn" class="text-red-500 font-bold hover:underline">Keluar</button>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+       <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+          <h3 class="font-bold text-gray-700">📋 Pesanan Saya</h3>
+       </div>
+       
+       <div id="myOrderList" class="p-6 space-y-4">
+          <p class="text-gray-500 text-center italic">Memuat riwayat...</p>
+       </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Ambil data order
+    const orders = JSON.parse(localStorage.getItem('db_orders')) || [];
+    const list = document.getElementById('myOrderList');
+
+    if (orders.length === 0) {
+       list.innerHTML = '<div class="text-center py-10 text-gray-400">🚫 Anda belum pernah menyewa alat.</div>';
+    } else {
+       // Tampilkan urut dari yang terbaru
+       list.innerHTML = orders.slice().reverse().map(o => {
+          let statusStyle = "bg-gray-100 text-gray-600";
+          let statusText = o.status;
+
+          // Terjemahkan Status
+          if(o.status === 'PAID_VERIFY') {
+             statusStyle = "bg-yellow-100 text-yellow-800 border-yellow-200";
+             statusText = "⏳ Menunggu Verifikasi Admin";
+          } else if (o.status === 'READY') {
+             statusStyle = "bg-green-100 text-green-800 border-green-200";
+             statusText = "✅ Siap / Dalam Perjalanan";
+          } else if (o.status === 'REJECTED') {
+             statusStyle = "bg-red-100 text-red-800 border-red-200";
+             statusText = "❌ Ditolak (Dokumen Invalid)";
+          }
+
+          return `
+          <div class="border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row justify-between gap-4 bg-white hover:shadow-md transition">
+             <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                   <span class="font-bold text-lg text-gray-800">${o.item}</span>
+                   <span class="text-xs px-2 py-1 rounded border ${statusStyle} font-bold">${statusText}</span>
+                </div>
+                <p class="text-sm text-gray-600">Durasi: ${o.duration} Hari • Lokasi: ${o.projectLoc}</p>
+                <p class="text-xs text-gray-400 mt-1">Order ID: ${o.id || '-'}</p>
+             </div>
+             
+             <div class="text-right flex flex-col justify-center">
+                <p class="text-xs text-gray-500 mb-1">Total Biaya</p>
+                <p class="font-bold text-xl text-orange-600">Rp ${o.total.toLocaleString()}</p>
+             </div>
+          </div>`;
+       }).join('');
+    }
+
+    // Logout Logic
+    document.getElementById('logoutBtn').onclick = () => {
+       localStorage.removeItem('isLoggedIn');
+       window.location.href = '/login';
+    };
+  </script>
+</MainLayout>

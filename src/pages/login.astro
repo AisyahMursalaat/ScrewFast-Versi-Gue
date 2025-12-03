@@ -1,0 +1,79 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout title="Login Masuk">
+  <div class="flex min-h-screen items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 dark:bg-neutral-900">
+    <div class="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg dark:bg-neutral-800">
+      
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white">
+          RentHeavyPro Login
+        </h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Masuk sebagai Staff atau Customer
+        </p>
+      </div>
+
+      <form id="loginForm" class="mt-8 space-y-6">
+        <div class="-space-y-px rounded-md shadow-sm">
+          <div>
+            <label for="username" class="sr-only">Username</label>
+            <input id="username" name="username" type="text" required class="relative block w-full appearance-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-white" placeholder="Username (admin / user)">
+          </div>
+          <div>
+            <label for="password" class="sr-only">Password</label>
+            <input id="password" name="password" type="password" required class="relative block w-full appearance-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-white" placeholder="Password">
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+            Masuk
+          </button>
+        </div>
+        
+        <p id="errorMsg" class="hidden text-center text-sm text-red-500 font-bold bg-red-50 p-2 rounded border border-red-100">
+          Username atau Password Salah!
+        </p>
+      </form>
+      
+      <div class="mt-6 border-t pt-4 text-center text-xs text-gray-400">
+        <p>Simulasi Login:</p>
+        <p>Staff: <b>admin</b> / <b>123</b></p>
+        <p>Customer: <b>user</b> / <b>123</b></p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+
+      // === LOGIKA PEMILAHAN AKUN ===
+      
+      // 1. Jika Staff/Admin
+      if (user === 'admin' && pass === '123') {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', 'admin'); // Tandai sebagai Admin
+        window.location.href = '/admin/dashboard'; // Lempar ke Dashboard Admin
+      } 
+      // 2. Jika Customer/User
+      else if (user === 'user' && pass === '123') {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', 'user'); // Tandai sebagai User
+        window.location.href = '/dashboard'; // Lempar ke Dashboard User
+      } 
+      // 3. Jika Salah
+      else {
+        errorMsg.classList.remove('hidden');
+      }
+    });
+  </script>
+</MainLayout>

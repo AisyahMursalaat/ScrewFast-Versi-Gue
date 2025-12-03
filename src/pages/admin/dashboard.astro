@@ -1,0 +1,95 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout title="Admin Operational Control">
+  <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8">
+    
+    <div class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gray-200 dark:border-neutral-700 pb-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Admin Dashboard</h1>
+        <p class="text-gray-500 mt-1">Operational Control Center</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-bold text-white bg-blue-600 px-3 py-1 rounded-full">SUPER ADMIN</span>
+        <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs transition">Logout</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      
+      <div class="lg:col-span-1 space-y-2">
+        <button onclick="switchTab('orders')" id="navOrders" class="w-full text-left px-4 py-3 rounded-lg bg-white shadow-sm border-l-4 border-orange-500 text-orange-600 font-bold transition">📋 Verifikasi Order</button>
+        <button onclick="switchTab('products')" id="navProducts" class="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-white text-gray-600 transition">📦 Inventaris Alat</button>
+        <button onclick="switchTab('gps')" id="navGPS" class="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-white text-gray-600 transition">📡 GPS Tracking</button>
+        <button onclick="switchTab('blog')" id="navBlog" class="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-white text-gray-600 transition">📝 Manajemen Blog</button>
+      </div>
+
+      <div class="lg:col-span-3">
+        
+        <div id="panelOrders" class="space-y-6">
+           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <h3 class="font-bold text-lg mb-4 flex justify-between items-center">
+                 Antrian Pesanan (PAID) 
+                 <button onclick="clearOrders()" class="text-xs text-red-400 underline hover:text-red-600">Reset Data</button>
+              </h3>
+              <div id="orderList" class="space-y-4"></div>
+           </div>
+        </div>
+
+        <div id="panelProducts" class="hidden space-y-6">
+           
+           <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-900 dark:border-neutral-700">
+              <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-gray-800">Daftar Produk Aktif</h3>
+                <button onclick="resetData()" class="text-xs text-gray-400 underline">Reset Default</button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Produk</th>
+                      <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Harga (Rp)</th>
+                      <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Stok</th>
+                      <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="productTableBody" class="divide-y divide-gray-200 bg-white">
+                    </tbody>
+                </table>
+              </div>
+           </div>
+
+           <div class="bg-orange-50 border border-orange-100 p-6 rounded-xl">
+              <h3 class="font-bold text-lg mb-4 text-orange-800 flex items-center gap-2">➕ Tambah Produk Baru</h3>
+              <form id="addProductForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Nama Barang</label>
+                  <input type="text" id="newName" placeholder="Contoh: Ayam Goreng" class="w-full border p-2 rounded" required>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Harga Sewa</label>
+                  <input type="number" id="newPrice" placeholder="Contoh: 25000" class="w-full border p-2 rounded" required>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Stok Awal</label>
+                  <input type="number" id="newStock" placeholder="Contoh: 100" class="w-full border p-2 rounded" required>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Icon / Gambar (Emoji/URL)</label>
+                  <input type="text" id="newImage" placeholder="🍗 atau https://..." class="w-full border p-2 rounded" required>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Deskripsi Singkat</label>
+                  <textarea id="newDesc" rows="2" placeholder="Deskripsi produk..." class="w-full border p-2 rounded" required></textarea>
+                </div>
+                <button type="submit" class="md:col-span-2 bg-orange-600 text-white font-bold py-2 rounded hover:bg-orange-700">Simpan Produk</button>
+              </form>
+           </div>
+        </div>
+
+        <div id="panelGPS" class="hidden space-y-6">
+           <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg">
+              <h3 class="font-bold text-lg mb-2 text-green-400">📡 Live Tracking Unit</h3>
+              <div class="h-64 bg-gray-800 rounded flex items-center justify-center border border-gray-700 relative overflow-hidden">
+                 <div class="absolute inset-0 opacity-2

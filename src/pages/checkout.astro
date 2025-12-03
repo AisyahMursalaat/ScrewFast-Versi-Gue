@@ -1,0 +1,155 @@
+---
+// File: src/pages/checkout.astro (FINAL BUG FIX VERSION)
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+<MainLayout title="Rincian Pembayaran Uang Muka">
+  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+    
+    <h1 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white border-b pb-4">
+        Konfirmasi & Rincian Pembayaran Awal
+    </h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-neutral-700 h-fit">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">Rincian Tagihan</h3>
+
+            <div id="rincian-biaya-container" class="space-y-3">
+                <p class="text-center text-gray-500 py-4">Memuat rincian...</p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-300 dark:border-neutral-700">
+                <p class="text-sm font-bold text-gray-800 dark:text-white">Total Transfer Sekarang (50% DP):</p>
+                <p id="transfer-total-display" class="text-3xl font-bold text-orange-600 mt-1">Rp 0</p>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-neutral-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-neutral-700 h-fit">
+            <h3 class="font-bold text-gray-900 dark:text-white text-lg mb-4">Transfer Uang Muka (50% DP)</h3>
+            
+            <div class="flex items-center gap-4 p-3 border rounded-lg bg-white dark:bg-neutral-800 mb-6">
+                <div class="w-14 h-10 bg-blue-700 text-white font-bold flex items-center justify-center rounded text-xs">BCA</div>
+                <div>
+                    <p class="font-bold text-gray-800 dark:text-white text-lg">123-456-7890</p>
+                    <p class="text-sm text-gray-500">a.n PT ScrewFast Indonesia</p>
+                </div>
+            </div>
+
+            <button id="btn-confirm" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition transform active:scale-95 disabled:opacity-50" disabled>
+                ✅ Saya Sudah Transfer
+            </button>
+            
+            <a href="/products" class="block text-center text-sm text-gray-500 mt-4 hover:underline">Kembali ke Keranjang</a>
+        </div>
+        
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  // PENTING: Pindahkan fungsi helper ke dalam script agar tidak ada masalah scope
+  const formatRupiah = (number) => new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(number);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnConfirm = document.getElementById('btn-confirm');
+    const btnCalculate = document.getElementById('btn-calculate-mobilization');
+    const rincianContainer = document.getElementById('rincian-biaya-container');
+    const transferTotalDisplay = document.getElementById('transfer-total-display');
+
+    // 1. Ambil data User & Cart dari Browser
+    const user = JSON.parse(localStorage.getItem('user'));
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Perbaikan: Pastikan array cart tidak kosong sebelum mengakses index 0
+    const rentalItem = cart.length > 0 ? cart[0] : null; 
+
+    // Variabel Tagihan
+    let totalFullTagihan = 0;
+    let totalRentalFee = 0;
+    let downPayment = 0;
+    let remainingBalance = 0;
+    let deliveryFee = 0;
+    
+    if (rentalItem) {
+      totalRentalFee = rentalItem.total_rental_fee || 0;
+      deliveryFee = rentalItem.delivery_fee || 0;
+      downPayment = rentalItem.down_payment || 0;
+      remainingBalance = rentalItem.remaining_balance || 0;
+      totalFullTagihan = totalRentalFee + deliveryFee;
+    }
+    
+    // 2. Cek Validasi Awal & Redirect jika data kosong
+    if (totalFullTagihan === 0 || !rentalItem) {
+      alert("Keranjang kosong atau data sewa belum lengkap. Kembali ke katalog.");
+      window.location.href = '/products';
+      return;
+    }
+
+    // 3. Tampilkan Rincian Biaya ke HTML
+    if (rincianContainer) {
+        rincianContainer.innerHTML = `
+          <div class="flex justify-between text-sm text-gray-600"><span>Nama Alat: ${rentalItem.nama}</span><span></span></div>
+          <div class="flex justify-between text-sm text-gray-600"><span>Durasi Sewa (${rentalItem.duration_days} hari)</span><span>Rp ${formatRupiah(totalRentalFee)}</span></div>
+          <div class="flex justify-between text-sm font-semibold text-gray-800"><span>Biaya Mobilisasi (Logistik)</span><span>Rp ${formatRupiah(deliveryFee)}</span></div>
+          <div class="flex justify-between font-bold pt-2 border-t text-gray-800"><span>TOTAL HARGA PENUH</span><span>Rp ${formatRupiah(totalFullTagihan)}</span></div>
+          <div class="mt-4 pt-4 border-t border-gray-300">
+              <div class="flex justify-between text-lg font-bold text-blue-600"><span>UANG MUKA DIBAYAR SEKARANG (50% DP)</span><span>Rp ${formatRupiah(downPayment)}</span></div>
+              <div class="flex justify-between text-sm text-red-600"><span>Sisa Pelunasan</span><span>Rp ${formatRupiah(remainingBalance)}</span></div>
+          </div>
+        `;
+        
+        // Tampilkan Total Transfer
+        if (transferTotalDisplay) {
+            transferTotalDisplay.innerText = `Rp ${formatRupiah(downPayment)}`;
+        }
+        
+        // Aktifkan tombol konfirmasi
+        if (btnConfirm) btnConfirm.disabled = false;
+    }
+
+
+    // 4. Klik Tombol "Sudah Transfer" (API Call)
+    if (btnConfirm) {
+      btnConfirm.addEventListener('click', async () => {
+        if (!user) {
+          alert("Anda belum login!");
+          window.location.href = '/login';
+          return;
+        }
+
+        // Payload yang dikirim ke Backend
+        const payload = {
+          user_id: user.id,
+          total_rental_fee: totalRentalFee,
+          delivery_fee: deliveryFee,
+          start_date: rentalItem.start_date,
+          end_date: rentalItem.end_date,
+          down_payment: downPayment,
+          remaining_balance: remainingBalance
+        };
+
+        try {
+          const response = await fetch('http://127.0.0.01:5000/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (response.status === 200 && result.success) {
+            localStorage.removeItem('cart');
+            window.dispatchEvent(new Event('cartUpdated'));
+            window.location.href = '/success';
+          } else {
+            alert("Gagal: " + (result.message || "Kesalahan server saat menyimpan transaksi."));
+          }
+
+        } catch (error) {
+          console.error(error);
+          alert("Backend Error! Pastikan 'node server.js' jalan.");
+        }
+      });
+    }
+  });
+</script>
