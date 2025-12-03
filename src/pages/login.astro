@@ -7,11 +7,11 @@ import MainLayout from "@/layouts/MainLayout.astro";
     <div class="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg dark:bg-neutral-800">
       
       <div class="text-center">
-        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white">
+        <h2 class="text-3xl font-extrabold text-gray-800 dark:text-white">
           RentHeavyPro Login
         </h2>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Masuk sebagai Staff atau Customer
+          Masuk untuk akses Dashboard & Sewa
         </p>
       </div>
 
@@ -19,7 +19,7 @@ import MainLayout from "@/layouts/MainLayout.astro";
         <div class="-space-y-px rounded-md shadow-sm">
           <div>
             <label for="username" class="sr-only">Username</label>
-            <input id="username" name="username" type="text" required class="relative block w-full appearance-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-white" placeholder="Username (admin / user)">
+            <input id="username" name="username" type="text" required class="relative block w-full appearance-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-white" placeholder="Username">
           </div>
           <div>
             <label for="password" class="sr-only">Password</label>
@@ -28,51 +28,75 @@ import MainLayout from "@/layouts/MainLayout.astro";
         </div>
 
         <div>
-          <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+          <button type="submit" id="btnLogin" class="group relative flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
             Masuk
           </button>
         </div>
         
-        <p id="errorMsg" class="hidden text-center text-sm text-red-500 font-bold bg-red-50 p-2 rounded border border-red-100">
-          Username atau Password Salah!
-        </p>
+        <p id="errorMsg" class="hidden text-center text-sm text-red-500 font-bold bg-red-50 p-2 rounded border border-red-100"></p>
       </form>
       
       <div class="mt-6 border-t pt-4 text-center text-xs text-gray-400">
-        <p>Simulasi Login:</p>
-        <p>Staff: <b>admin</b> / <b>123</b></p>
-        <p>Customer: <b>user</b> / <b>123</b></p>
+        <p>Pastikan Backend (Port 5000) sudah jalan.</p>
       </div>
 
     </div>
   </div>
 
   <script>
+    // Konek ke Server Backend Kamu
+    const API_URL = 'http://localhost:5000/api'; 
+
     const form = document.getElementById('loginForm');
+    const btnLogin = document.getElementById('btnLogin');
     const errorMsg = document.getElementById('errorMsg');
 
-    form?.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      btnLogin.innerText = "Mengecek...";
+      btnLogin.disabled = true;
+      errorMsg.classList.add('hidden');
+
       const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
 
-      // === LOGIKA PEMILAHAN AKUN ===
-      
-      // 1. Jika Staff/Admin
-      if (user === 'admin' && pass === '123') {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole', 'admin'); // Tandai sebagai Admin
-        window.location.href = '/admin/dashboard'; // Lempar ke Dashboard Admin
-      } 
-      // 2. Jika Customer/User
-      else if (user === 'user' && pass === '123') {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole', 'user'); // Tandai sebagai User
-        window.location.href = '/dashboard'; // Lempar ke Dashboard User
-      } 
-      // 3. Jika Salah
-      else {
-        errorMsg.classList.remove('hidden');
+      try {
+          // 1. KIRIM DATA KE BACKEND (XAMPP)
+          const res = await fetch(`${API_URL}/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username: user, password: pass })
+          });
+
+          const result = await res.json();
+
+          if (result.success) {
+              // 2. LOGIN SUKSES -> SIMPAN DATA ASLI DARI DATABASE
+              localStorage.setItem('isLoggedIn', 'true');
+              localStorage.setItem('userRole', result.data.role); // 'admin' atau 'customer'
+              
+              // INI KUNCINYA: Simpan Nama Lengkap (full_name) dari Database
+              // Kalau kosong, pakai username sebagai cadangan
+              localStorage.setItem('username', result.data.full_name || result.data.username); 
+              localStorage.setItem('userId', result.data.id);
+
+              // 3. REDIRECT SESUAI ROLE
+              if (result.data.role === 'admin') {
+                  window.location.href = '/admin/dashboard';
+              } else {
+                  // Kalau user biasa, bisa ke dashboard atau langsung belanja
+                  window.location.href = '/products'; 
+              }
+          } else {
+              // Login Gagal
+              throw new Error(result.message || "Username/Password Salah");
+          }
+
+      } catch (err) {
+          errorMsg.innerText = err.message;
+          errorMsg.classList.remove('hidden');
+          btnLogin.innerText = "Masuk";
+          btnLogin.disabled = false;
       }
     });
   </script>

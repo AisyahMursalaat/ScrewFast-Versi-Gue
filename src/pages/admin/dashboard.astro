@@ -2,94 +2,255 @@
 import MainLayout from "@/layouts/MainLayout.astro";
 ---
 
-<MainLayout title="Admin Operational Control">
+<MainLayout title="Admin Dashboard | RentHeavyPro">
   <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8">
     
-    <div class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gray-200 dark:border-neutral-700 pb-6">
+    <div class="mb-8 flex justify-between items-center border-b pb-4">
       <div>
         <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Admin Dashboard</h1>
-        <p class="text-gray-500 mt-1">Operational Control Center</p>
+        <p class="text-gray-500">Database Status: <span class="text-green-600 font-bold">● Connected (XAMPP Port 3307)</span></p>
       </div>
-      <div class="flex items-center gap-3">
-        <span class="text-xs font-bold text-white bg-blue-600 px-3 py-1 rounded-full">SUPER ADMIN</span>
-        <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs transition">Logout</button>
-      </div>
+      <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700">Logout</button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      
-      <div class="lg:col-span-1 space-y-2">
-        <button onclick="switchTab('orders')" id="navOrders" class="w-full text-left px-4 py-3 rounded-lg bg-white shadow-sm border-l-4 border-orange-500 text-orange-600 font-bold transition">📋 Verifikasi Order</button>
-        <button onclick="switchTab('products')" id="navProducts" class="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-white text-gray-600 transition">📦 Inventaris Alat</button>
-        <button onclick="switchTab('gps')" id="navGPS" class="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-white text-gray-600 transition">📡 GPS Tracking</button>
-        <button onclick="switchTab('blog')" id="navBlog" class="w-full text-left px-4 py-3 rounded-lg bg-gray-50 hover:bg-white text-gray-600 transition">📝 Manajemen Blog</button>
-      </div>
+    <div class="flex space-x-4 mb-6">
+      <button onclick="switchTab('orders')" id="tabOrders" class="px-6 py-3 rounded-lg font-bold bg-white shadow text-orange-600 border border-orange-200">📋 Verifikasi Order</button>
+      <button onclick="switchTab('products')" id="tabProducts" class="px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100">📦 Kelola Unit</button>
+      <button onclick="switchTab('gps')" id="tabGPS" class="px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100">📡 GPS Tracking</button>
+    </div>
 
-      <div class="lg:col-span-3">
+    <div id="panelOrders" class="space-y-6">
+       <div class="bg-white p-6 rounded-xl shadow border dark:bg-neutral-900 dark:border-neutral-700">
+          <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-lg">Antrian Pesanan Masuk</h3>
+              <button onclick="fetchOrders()" class="text-blue-600 text-sm hover:underline">🔄 Refresh Data</button>
+          </div>
+          
+          <div id="orderList" class="space-y-4">
+              <p class="text-center py-10 text-gray-400">Memuat data pesanan dari Database...</p>
+          </div>
+       </div>
+    </div>
+
+    <div id="panelProducts" class="hidden space-y-6">
+       <div class="bg-orange-50 p-6 rounded-xl border border-orange-200">
+          <h3 class="font-bold text-lg mb-4 text-orange-800">➕ Tambah Unit Baru (Ke MySQL)</h3>
+          <form id="addProductForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <input type="text" id="pName" placeholder="Nama Unit (misal: Crane 50T)" class="border p-2 rounded" required>
+             <input type="number" id="pPrice" placeholder="Harga Sewa Harian" class="border p-2 rounded" required>
+             <input type="number" id="pStock" placeholder="Stok Awal" class="border p-2 rounded" required>
+             <input type="text" id="pImage" placeholder="Emoji (🚜) atau URL Gambar" class="border p-2 rounded" required>
+             <textarea id="pDesc" class="md:col-span-2 border p-2 rounded" placeholder="Deskripsi unit..." rows="2"></textarea>
+             <button type="submit" class="md:col-span-2 bg-orange-600 text-white font-bold py-2 rounded hover:bg-orange-700">Simpan ke Database</button>
+          </form>
+       </div>
+
+       <div class="bg-white p-6 rounded-xl shadow border">
+          <h3 class="font-bold mb-4">Daftar Unit di Database</h3>
+          <table class="w-full text-sm text-left">
+             <thead class="bg-gray-100 uppercase text-gray-500">
+                <tr><th class="p-3">Unit</th><th class="p-3">Harga/Hari</th><th class="p-3">Stok</th><th class="p-3">ID</th></tr>
+             </thead>
+             <tbody id="productListBody"></tbody>
+          </table>
+       </div>
+    </div>
+
+    <div id="panelGPS" class="hidden">
+       <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg h-[500px] relative overflow-hidden flex items-center justify-center group">
+          <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle, #4ade80 1px, transparent 1px); background-size: 40px 40px;"></div>
+          <div class="absolute top-10 right-10 text-xs font-mono text-green-400 border border-green-400 p-2 rounded">
+              SYSTEM: ONLINE<br>SATELLITES: 8/12<br>LATENCY: 24ms
+          </div>
+          
+          <div class="absolute top-1/4 left-1/4 text-4xl animate-bounce cursor-pointer group-hover:scale-110 transition" title="Excavator #204">
+             🚜 <span class="text-[10px] bg-black px-1 rounded block text-center -mt-8">Active</span>
+          </div>
+          <div class="absolute bottom-1/3 right-1/3 text-4xl animate-pulse cursor-pointer group-hover:scale-110 transition" title="Crane #05">
+             🏗️ <span class="text-[10px] bg-black px-1 rounded block text-center -mt-8">Idle</span>
+          </div>
+          
+          <div class="absolute bottom-6 left-6 text-sm font-mono">
+             <p class="text-green-400">>> Tracking Unit #204 (Excavator PC200)</p>
+             <p class="text-gray-400">Location: -6.2088, 106.8456 (Jakarta Project A)</p>
+             <p class="text-gray-400">Speed: 0 km/h (Working)</p>
+          </div>
+       </div>
+    </div>
+
+    <div id="verifyModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+       <div class="bg-white w-full max-w-md rounded-xl p-6 text-center">
+          <h3 class="font-bold text-xl mb-2">Verifikasi Dokumen Legalitas</h3>
+          <div class="my-6 border-2 border-dashed border-gray-300 p-4 rounded bg-gray-50">
+              <p class="text-sm text-gray-500 mb-2">File Uploaded:</p>
+              <a id="docLink" href="#" target="_blank" class="text-blue-600 font-bold underline text-lg break-all">Lihat Dokumen</a>
+              <p class="text-xs text-gray-400 mt-2">*Klik link untuk membuka file di tab baru</p>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+             <button onclick="updateStatus('rejected')" class="bg-red-100 text-red-600 font-bold py-3 rounded hover:bg-red-200">❌ Tolak</button>
+             <button onclick="updateStatus('active')" class="bg-green-600 text-white font-bold py-3 rounded hover:bg-green-700">✅ Approve & Aktifkan</button>
+          </div>
+          <button onclick="closeModal()" class="mt-4 text-sm text-gray-500 hover:text-gray-800">Tutup</button>
+       </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ✅ GANTI PORT JADI 5000
+    const API_URL = 'http://localhost:5000/api';
+    const UPLOAD_URL = 'http://localhost:5000/uploads'; // Folder gambar di server
+    
+    let selectedOrderId = null;
+
+    // --- NAVIGATION ---
+    window.switchTab = (tabName) => {
+        ['orders', 'products', 'gps'].forEach(t => {
+            document.getElementById(`panel${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
+            const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+            btn.classList.remove('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
+            btn.classList.add('text-gray-500', 'hover:bg-gray-100');
+        });
+        document.getElementById(`panel${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.remove('hidden');
+        const activeBtn = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+        activeBtn.classList.add('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
+        activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+
+        if(tabName === 'orders') fetchOrders();
+        if(tabName === 'products') fetchProducts();
+    };
+
+    // --- 1. FETCH ORDERS ---
+    async function fetchOrders() {
+        try {
+            const res = await fetch(`${API_URL}/orders`);
+            const data = await res.json();
+            const list = document.getElementById('orderList');
+            
+            if(data.length === 0) { list.innerHTML = '<p class="text-center text-gray-400 py-4">Belum ada pesanan.</p>'; return; }
+
+            list.innerHTML = data.map(o => {
+                let statusBadge = '';
+                let actionBtn = '';
+
+                // Logic Status
+                if(o.status === 'pending_verification') {
+                    statusBadge = `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold">⏳ Menunggu Verifikasi</span>`;
+                    actionBtn = `<button onclick="openVerifyModal('${o.order_id}', '${o.ktp_sim_image}')" class="bg-blue-600 text-white px-3 py-1.5 rounded text-sm font-bold hover:bg-blue-700 shadow-sm transition">Verifikasi</button>`;
+                } else if(o.status === 'active') {
+                    statusBadge = `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">✅ Aktif</span>`;
+                } else if(o.status === 'rejected') {
+                    statusBadge = `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">❌ Ditolak</span>`;
+                }
+
+                return `
+                <div class="border p-4 rounded-lg bg-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-sm transition">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-gray-800">${o.customer_name}</p>
+                            <span class="text-[10px] bg-gray-200 px-2 py-0.5 rounded text-gray-600">${o.order_id}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">Unit: <b>${o.item_name || 'Alat Berat'}</b> (${o.duration})</p>
+                        <p class="text-xs text-gray-500 mt-0.5">📍 ${o.project_loc}</p>
+                        <div class="mt-2">${statusBadge}</div>
+                    </div>
+                    <div class="text-right w-full md:w-auto">
+                        <p class="font-bold text-orange-600 text-lg">Rp ${parseInt(o.total_rental_fee).toLocaleString()}</p>
+                        <div class="mt-2">${actionBtn}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('orderList').innerHTML = '<p class="text-red-500 text-center">Gagal mengambil data dari Server (Port 5000).</p>';
+        }
+    }
+
+    // --- 2. FETCH PRODUCTS ---
+    async function fetchProducts() {
+        try {
+            const res = await fetch(`${API_URL}/products`);
+            const data = await res.json();
+            const tbody = document.getElementById('productListBody');
+            tbody.innerHTML = data.map(p => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 font-bold">${p.image && p.image.length < 5 ? p.image : '📷'} ${p.name}</td>
+                    <td class="p-3">Rp ${parseInt(p.price).toLocaleString()}</td>
+                    <td class="p-3 font-mono">${p.stock}</td>
+                    <td class="p-3 text-gray-400 text-xs">#${p.id}</td>
+                </tr>
+            `).join('');
+        } catch (e) { console.error(e); }
+    }
+
+    // --- 3. ADD PRODUCT ---
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = {
+            name: document.getElementById('pName').value,
+            price: document.getElementById('pPrice').value,
+            stock: document.getElementById('pStock').value,
+            image: document.getElementById('pImage').value,
+            description: document.getElementById('pDesc').value
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if(res.ok) {
+                alert('✅ Produk Berhasil Disimpan ke MySQL!');
+                e.target.reset();
+                fetchProducts();
+            }
+        } catch (e) { alert('Gagal simpan: ' + e); }
+    });
+
+    // --- 4. VERIFICATION MODAL ---
+    window.openVerifyModal = (orderId, docImage) => {
+        selectedOrderId = orderId;
+        const link = document.getElementById('docLink');
         
-        <div id="panelOrders" class="space-y-6">
-           <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <h3 class="font-bold text-lg mb-4 flex justify-between items-center">
-                 Antrian Pesanan (PAID) 
-                 <button onclick="clearOrders()" class="text-xs text-red-400 underline hover:text-red-600">Reset Data</button>
-              </h3>
-              <div id="orderList" class="space-y-4"></div>
-           </div>
-        </div>
+        if (docImage && docImage !== 'null') {
+            link.href = `${UPLOAD_URL}/${docImage}`;
+            link.innerText = docImage;
+            link.classList.remove('pointer-events-none', 'text-gray-400');
+            link.classList.add('text-blue-600', 'underline');
+        } else {
+            link.href = "#";
+            link.innerText = "Tidak ada file";
+            link.classList.add('pointer-events-none', 'text-gray-400');
+            link.classList.remove('text-blue-600', 'underline');
+        }
+        
+        document.getElementById('verifyModal').classList.remove('hidden');
+    };
 
-        <div id="panelProducts" class="hidden space-y-6">
-           
-           <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-900 dark:border-neutral-700">
-              <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 class="font-bold text-gray-800">Daftar Produk Aktif</h3>
-                <button onclick="resetData()" class="text-xs text-gray-400 underline">Reset Default</button>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                    <tr>
-                      <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Produk</th>
-                      <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Harga (Rp)</th>
-                      <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Stok</th>
-                      <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody id="productTableBody" class="divide-y divide-gray-200 bg-white">
-                    </tbody>
-                </table>
-              </div>
-           </div>
+    window.closeModal = () => document.getElementById('verifyModal').classList.add('hidden');
 
-           <div class="bg-orange-50 border border-orange-100 p-6 rounded-xl">
-              <h3 class="font-bold text-lg mb-4 text-orange-800 flex items-center gap-2">➕ Tambah Produk Baru</h3>
-              <form id="addProductForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 mb-1">Nama Barang</label>
-                  <input type="text" id="newName" placeholder="Contoh: Ayam Goreng" class="w-full border p-2 rounded" required>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 mb-1">Harga Sewa</label>
-                  <input type="number" id="newPrice" placeholder="Contoh: 25000" class="w-full border p-2 rounded" required>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 mb-1">Stok Awal</label>
-                  <input type="number" id="newStock" placeholder="Contoh: 100" class="w-full border p-2 rounded" required>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 mb-1">Icon / Gambar (Emoji/URL)</label>
-                  <input type="text" id="newImage" placeholder="🍗 atau https://..." class="w-full border p-2 rounded" required>
-                </div>
-                <div class="md:col-span-2">
-                  <label class="block text-xs font-bold text-gray-500 mb-1">Deskripsi Singkat</label>
-                  <textarea id="newDesc" rows="2" placeholder="Deskripsi produk..." class="w-full border p-2 rounded" required></textarea>
-                </div>
-                <button type="submit" class="md:col-span-2 bg-orange-600 text-white font-bold py-2 rounded hover:bg-orange-700">Simpan Produk</button>
-              </form>
-           </div>
-        </div>
+    window.updateStatus = async (status) => {
+        if(!selectedOrderId) return;
+        try {
+            const res = await fetch(`${API_URL}/orders/${selectedOrderId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            if(res.ok) {
+                alert(`Status Order Berubah Jadi: ${status.toUpperCase()}`);
+                closeModal();
+                fetchOrders();
+            }
+        } catch (e) { alert('Error update status'); }
+    };
 
-        <div id="panelGPS" class="hidden space-y-6">
-           <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg">
-              <h3 class="font-bold text-lg mb-2 text-green-400">📡 Live Tracking Unit</h3>
-              <div class="h-64 bg-gray-800 rounded flex items-center justify-center border border-gray-700 relative overflow-hidden">
-                 <div class="absolute inset-0 opacity-2
+    // --- INIT ---
+    if(localStorage.getItem('isLoggedIn') !== 'true') window.location.href = '/login';
+    document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('isLoggedIn'); window.location.href = '/login'; };
+    
+    // Auto Load First Tab
+    fetchOrders();
+  </script>
+</MainLayout>

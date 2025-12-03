@@ -2,18 +2,12 @@
 import MainLayout from "@/layouts/MainLayout.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import { SITE } from "@data/constants";
 
 export async function getStaticPaths() {
-  const productEntries = await getCollection("products", ({ id }) =>
-    id.startsWith("en/")
-  );
+  const productEntries = await getCollection("products", ({ id }) => id.startsWith("en/"));
   return productEntries.map((product) => {
     const idWithoutLang = product.id.replace(/^en\//, "");
-    return {
-      params: { id: idWithoutLang },
-      props: { product },
-    };
+    return { params: { id: idWithoutLang }, props: { product } };
   });
 }
 
@@ -29,29 +23,19 @@ const pageTitle = `${product.data.title} | RentHeavyPro`;
       
       <div class="w-full md:w-1/2">
         <div id="defaultImageContainer" class="rounded-xl overflow-hidden shadow-lg bg-gray-100 dark:bg-neutral-800">
-           <Image
-            src={product.data.main.imgMain}
-            class="w-full h-auto object-cover"
-            alt={product.data.main.imgAlt}
-            loading="eager"
-          />
+           <Image src={product.data.main.imgMain} class="w-full h-auto object-cover" alt={product.data.main.imgAlt} loading="eager" />
         </div>
-        <div id="customImageContainer" class="hidden rounded-xl overflow-hidden shadow-lg bg-gray-100 dark:bg-neutral-800 h-[400px] flex items-center justify-center text-[150px]">
-        </div>
+        <div id="customImageContainer" class="hidden rounded-xl overflow-hidden shadow-lg bg-gray-100 dark:bg-neutral-800 h-[400px] flex items-center justify-center text-[150px]"></div>
       </div>
 
       <div class="w-full md:w-1/2 space-y-6">
         <div>
-          <h1 id="prodTitle" class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
-            {product.data.title}
-          </h1>
-          <p id="prodDesc" class="mt-4 text-lg text-gray-600 dark:text-gray-400">
-            {product.data.main.content}
-          </p>
+          <h1 id="prodTitle" class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">{product.data.title}</h1>
+          <p id="prodDesc" class="mt-4 text-lg text-gray-600 dark:text-gray-400">{product.data.main.content}</p>
         </div>
 
         <div class="p-6 bg-orange-50 border border-orange-200 rounded-2xl dark:bg-neutral-800 dark:border-neutral-700 shadow-sm">
-           <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Harga Dasar (Harian)</p>
+           <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Harga Sewa (Lepas Kunci)</p>
            <div class="flex items-baseline gap-2">
              <span id="dynamicPrice" class="text-3xl font-extrabold text-orange-600">Loading...</span>
              <span class="text-gray-500">/ hari</span>
@@ -61,9 +45,9 @@ const pageTitle = `${product.data.title} | RentHeavyPro`;
               <span id="dynamicStock" class="font-bold text-gray-700 dark:text-gray-300">Cek Stok...</span>
            </div>
            <div class="mt-4 pt-4 border-t border-orange-200 text-xs text-orange-800 space-y-1">
-              <p>💡 <b>Diskon Tersedia:</b></p>
-              <p>• Sewa Bulanan: Diskon 10%</p>
-              <p>• Sewa Tahunan: Diskon 20%</p>
+              <p>💡 <b>Paket Hemat:</b></p>
+              <p>• Bulanan: Disc 10%</p>
+              <p>• Tahunan: Disc 30% (Corporate)</p>
            </div>
         </div>
 
@@ -77,7 +61,7 @@ const pageTitle = `${product.data.title} | RentHeavyPro`;
   <div id="checkoutModal" class="fixed inset-0 z-[999] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white dark:bg-neutral-900 w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
       
-      <div class="p-5 border-b border-gray-200 dark:border-neutral-700 flex justify-between items-center bg-blue-600 rounded-t-2xl">
+      <div class="p-5 border-b border-gray-200 dark:border-neutral-700 flex justify-between items-center bg-orange-600 rounded-t-2xl">
         <h3 class="font-bold text-xl text-white">Formulir Sewa</h3>
         <button id="closeModalBtn" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
       </div>
@@ -90,266 +74,193 @@ const pageTitle = `${product.data.title} | RentHeavyPro`;
               <h4 id="mName" class="font-bold text-gray-800">Nama Alat</h4>
               <p id="mPrice" class="text-sm text-orange-600 font-bold">Rp 0</p>
               <input type="hidden" id="mPriceRaw">
+              <input type="hidden" id="mProductId">
            </div>
         </div>
 
-        <div class="flex justify-between text-xs font-bold text-gray-400 border-b pb-2">
-           <span id="stepLabel1" class="text-blue-600">1. Data Sewa</span>
-           <span id="stepLabel2">2. Dokumen</span>
-           <span id="stepLabel3">3. Bayar</span>
-        </div>
-
-        <div id="step1" class="space-y-4">
-          <input type="text" id="inpName" class="w-full border p-2.5 rounded-lg" placeholder="Nama Lengkap / Perusahaan">
-          <textarea id="inpProjectLoc" rows="2" class="w-full border p-2.5 rounded-lg" placeholder="Lokasi Proyek (Alamat Lengkap)"></textarea>
+        <form id="rentalForm" class="space-y-4">
+          <input type="text" id="inpName" class="w-full border p-2.5 rounded-lg" placeholder="Nama Lengkap" required>
+          <textarea id="inpProjectLoc" rows="2" class="w-full border p-2.5 rounded-lg" placeholder="Lokasi Proyek" required></textarea>
           
           <div class="grid grid-cols-2 gap-4">
              <div>
-               <label class="text-xs text-gray-500">Mulai Tanggal</label>
-               <input type="date" id="inpDate" class="w-full border p-2.5 rounded-lg">
+               <label class="text-xs text-gray-500">Mulai Sewa</label>
+               <input type="date" id="inpDate" class="w-full border p-2.5 rounded-lg" required>
              </div>
              <div>
-               <label class="text-xs text-gray-500">Jumlah Durasi</label>
-               <input type="number" id="inpDuration" value="1" min="1" class="w-full border p-2.5 rounded-lg">
+               <label class="text-xs text-gray-500">Durasi & Satuan</label>
+               <div class="flex">
+                   <input id="inpDur" type="number" value="1" min="1" class="w-1/2 border p-2 rounded-l text-center" required>
+                   <select id="inpType" class="w-1/2 border p-2 rounded-r bg-gray-50 font-bold text-sm">
+                      <option value="Hari">Harian</option>
+                      <option value="Jam">Jam (Min 50)</option>
+                      <option value="Bulan">Bulan (Disc 10%)</option>
+                      <option value="Tahun">Tahun (Disc 30%)</option>
+                   </select>
+               </div>
              </div>
           </div>
+          
+          <div id="discountBadge" class="hidden bg-green-50 text-green-700 text-xs font-bold p-2 rounded text-center border border-green-200">Hemat: Rp 0</div>
 
           <div>
-             <label class="text-xs text-gray-500">Pilih Paket Sewa</label>
-             <select id="inpUnitType" class="w-full border p-2.5 rounded-lg bg-blue-50 font-bold text-blue-900 border-blue-200 focus:ring-2 focus:ring-blue-500">
-                <option value="hari">📅 Harian (Harga Normal)</option>
-                <option value="bulan">🗓️ Bulanan (Diskon 10%)</option>
-                <option value="tahun">📆 Tahunan (Diskon 20%)</option>
-             </select>
+               <label class="block text-sm font-medium mb-1">Upload SIM/SIO</label>
+               <input id="inpFile" type="file" accept="image/*,.pdf" class="w-full border p-2 rounded text-sm" required>
+          </div>
+          
+          <div id="paymentUI" class="hidden border-t pt-4 mt-4 bg-blue-50 p-3 rounded text-center">
+              <p class="text-sm text-gray-500">Payment Gateway Simulation...</p>
+              <p class="text-2xl font-mono font-bold text-gray-800">8800 1234 5678</p>
           </div>
 
-          <div class="bg-blue-50 p-3 rounded text-right">
-             <p class="text-xs text-gray-500">Estimasi Total:</p>
-             <span id="totalDisplay" class="font-bold text-xl text-blue-700">Rp 0</span>
-             <p id="discountInfo" class="text-xs text-green-600 font-bold hidden">Hemat: Rp 0</p>
+          <div class="bg-blue-50 p-3 rounded text-right font-bold text-blue-700">
+             Total: <span id="totalDisplay">Rp 0</span>
           </div>
-          <button id="btnToStep2" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Lanjut</button>
-        </div>
-
-        <div id="step2" class="hidden space-y-4">
-          <div class="bg-yellow-50 p-3 rounded border border-yellow-200 text-sm text-yellow-800">
-             ⚠️ Wajib upload <b>SIM B2 Umum</b> atau <b>SIO</b>.
-          </div>
-          <div class="border-2 border-dashed border-gray-300 p-8 rounded-lg text-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition relative">
-             <input type="file" id="inpFile" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,.pdf">
-             <div id="filePreviewText">
-                <span class="text-4xl">📂</span>
-                <p class="text-sm mt-2 font-bold text-gray-600">Klik Upload Dokumen</p>
-             </div>
-          </div>
-          <div class="flex gap-2">
-             <button onclick="showStep(1)" class="w-1/3 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">Kembali</button>
-             <button id="btnToStep3" class="w-2/3 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">Lanjut Bayar</button>
-          </div>
-        </div>
-
-        <div id="step3" class="hidden space-y-4">
-           <h4 class="font-bold text-gray-700">Pilih Metode Pembayaran</h4>
-           <div class="grid grid-cols-2 gap-3">
-              <button class="pay-method border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 flex items-center gap-2" data-bank="BCA"><span class="font-bold text-blue-800">BCA</span> VA</button>
-              <button class="pay-method border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 flex items-center gap-2" data-bank="MANDIRI"><span class="font-bold text-yellow-600">MANDIRI</span></button>
-              <button class="pay-method border p-3 rounded-lg hover:border-blue-500 hover:bg-blue-50 flex items-center gap-2" data-bank="QRIS"><span class="font-bold text-gray-800">QRIS</span></button>
-           </div>
-           <button onclick="showStep(2)" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg mt-4">Kembali</button>
-        </div>
-
-        <div id="step4" class="hidden text-center space-y-6">
-           <div id="loadingSpinner" class="py-10"><div class="animate-spin text-5xl mb-4">🔄</div><p>Menghubungkan Bank...</p></div>
-           <div id="vaDisplay" class="hidden">
-              <p class="text-gray-500">Virtual Account / Kode Bayar:</p>
-              <h2 class="text-3xl font-mono font-bold tracking-wider text-gray-800 bg-gray-100 p-4 rounded" id="vaNumber">...</h2>
-              <button id="btnSimulatePay" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 shadow-lg animate-pulse mt-4">🟢 Simulasi: Saya Sudah Bayar</button>
-           </div>
-        </div>
-
+          <button type="submit" id="btnToStep2" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Bayar & Sewa</button>
+        </form>
       </div>
     </div>
   </div>
 </MainLayout>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    
-    // --- DATA ---
-    const defaultProducts = [{ id: 1, name: "Excavator PC200", price: 2500000, stock: 5, image: "🚜" }];
-    const dbProducts = JSON.parse(localStorage.getItem('db_products')) || defaultProducts;
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const customID = urlParams.get('custom_id');
-    let dbID = customID ? parseInt(customID) : (window.location.pathname.includes('t845') ? 1 : window.location.pathname.includes('a765') ? 2 : window.location.pathname.includes('b203') ? 3 : 4);
+  const API_URL = 'http://localhost:5000/api';
 
-    const matchedProduct = dbID > 0 ? dbProducts.find(p => p.id === dbID) : null;
+  document.addEventListener("DOMContentLoaded", async function () {
     
-    // Elements
-    const titleEl = document.getElementById('prodTitle');
+    // 1. FETCH DATA DARI DB XAMPP BERDASARKAN URL ID
+    const url = window.location.pathname;
+    const products = await fetch(`${API_URL}/products`).then(res => res.json());
+    
+    // Mapping logic (URL ID -> Database ID)
+    // Asumsi: URL item-t845 adalah ID 1, dst.
+    let dbID = 0;
+    if(url.includes('item-t845')) dbID = 1;
+    else if(url.includes('item-a765')) dbID = 2;
+    else if(url.includes('item-b203')) dbID = 3;
+    else if(url.includes('item-f303')) dbID = 4;
+    
+    // Kalau produk baru (dari fitur tambah admin), biasanya ID-nya > 4
+    // Untuk demo ini kita ambil produk pertama jika tidak match
+    const matchedProduct = products.find(p => p.id === dbID) || products[0];
+
+    // Update UI
     const priceEl = document.getElementById('dynamicPrice');
     const stockEl = document.getElementById('dynamicStock');
     const btnSewa = document.getElementById('openCheckoutBtn');
-    const customImg = document.getElementById('customImageContainer');
-    const defaultImg = document.getElementById('defaultImageContainer');
-    
-    // Modal Elements
-    const mName = document.getElementById('mName');
-    const mPrice = document.getElementById('mPrice');
     const mPriceRaw = document.getElementById('mPriceRaw');
-    const mIcon = document.getElementById('mIcon');
-
+    const mProductId = document.getElementById('mProductId');
+    
     if (matchedProduct) {
-       titleEl.innerText = matchedProduct.name;
+       document.getElementById('prodTitle').innerText = matchedProduct.name;
+       document.getElementById('mName').innerText = matchedProduct.name;
        priceEl.innerText = `Rp ${parseInt(matchedProduct.price).toLocaleString('id-ID')}`;
-       stockEl.innerText = `Stok: ${matchedProduct.stock} Unit`;
+       document.getElementById('mPrice').innerText = `Rp ${parseInt(matchedProduct.price).toLocaleString('id-ID')} / hari`;
        
-       mName.innerText = matchedProduct.name;
-       mPrice.innerText = `Rp ${parseInt(matchedProduct.price).toLocaleString('id-ID')} / hari`;
        mPriceRaw.value = matchedProduct.price;
-       if(matchedProduct.image && matchedProduct.image.length < 5) mIcon.innerText = matchedProduct.image;
+       mProductId.value = matchedProduct.id;
+       
+       stockEl.innerText = `Stok: ${matchedProduct.stock} Unit`;
 
-       if(matchedProduct.image) {
-          if(defaultImg) defaultImg.classList.add('hidden');
-          if(customImg) {
-             customImg.classList.remove('hidden');
-             customImg.innerHTML = matchedProduct.image.length < 5 ? matchedProduct.image : `<img src="${matchedProduct.image}" class="w-full h-full object-cover">`;
-          }
-       }
-       if(matchedProduct.stock <= 0) {
-          btnSewa.disabled = true;
-          btnSewa.innerText = "Stok Habis";
-          btnSewa.classList.add('bg-gray-400');
+       if(matchedProduct.image && matchedProduct.image.length < 5) {
+           document.getElementById('customImageContainer').innerHTML = matchedProduct.image;
+           document.getElementById('customImageContainer').classList.remove('hidden');
+           document.getElementById('defaultImageContainer').classList.add('hidden');
+           document.getElementById('mIcon').innerText = matchedProduct.image;
        }
     }
 
-    // --- LOGIKA MODAL ---
+    // 2. LOGIKA HITUNG HARGA (SAMA DENGAN INDEX)
     const modal = document.getElementById('checkoutModal');
-    const inpDuration = document.getElementById('inpDuration');
-    const inpUnitType = document.getElementById('inpUnitType'); // Select Box Baru
+    const inpDur = document.getElementById('inpDur');
+    const inpType = document.getElementById('inpType');
     const totalDisplay = document.getElementById('totalDisplay');
-    const discountInfo = document.getElementById('discountInfo');
-    
-    window.showStep = (num) => {
-       [1,2,3,4].forEach(n => document.getElementById(`step${n}`).classList.add('hidden'));
-       document.getElementById(`step${num}`).classList.remove('hidden');
-       [1,2,3].forEach(n => document.getElementById(`stepLabel${n}`).classList.remove('text-blue-600', 'underline'));
-       if(num <= 3) document.getElementById(`stepLabel${num}`).classList.add('text-blue-600', 'underline');
-    };
+    const discountBadge = document.getElementById('discountBadge');
 
-    btnSewa.addEventListener('click', () => {
-       if(!matchedProduct) return;
-       modal.classList.remove('hidden');
-       window.showStep(1);
-       calcTotal();
-    });
-
+    btnSewa.addEventListener('click', () => { modal.classList.remove('hidden'); calculateTotal(); });
     document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
 
-    // --- LOGIKA HARGA BARU (HARIAN/BULANAN/TAHUNAN) ---
-    function calcTotal() {
-       const duration = parseInt(inpDuration.value) || 1;
-       const basePrice = parseInt(mPriceRaw.value) || 0;
-       const unitType = inpUnitType.value; // 'hari', 'bulan', 'tahun'
-       
+    function calculateTotal() {
+       const dailyPrice = parseInt(mPriceRaw.value);
+       let duration = parseInt(inpDur.value);
+       const type = inpType.value;
        let total = 0;
-       let originalTotal = 0;
-       let label = "";
+       let normalTotal = 0;
 
-       if (unitType === 'hari') {
-          total = basePrice * duration;
-          originalTotal = total;
-          label = "Hari";
-          discountInfo.classList.add('hidden');
-       } 
-       else if (unitType === 'bulan') {
-          // Asumsi 1 Bulan = 30 Hari, Diskon 10%
-          originalTotal = (basePrice * 30) * duration;
-          total = originalTotal * 0.9; // Diskon 10%
-          label = "Bulan";
-          discountInfo.innerText = `Hemat: Rp ${(originalTotal - total).toLocaleString('id-ID')} (Diskon Bulanan)`;
-          discountInfo.classList.remove('hidden');
-       } 
-       else if (unitType === 'tahun') {
-          // Asumsi 1 Tahun = 365 Hari, Diskon 20%
-          originalTotal = (basePrice * 365) * duration;
-          total = originalTotal * 0.8; // Diskon 20%
-          label = "Tahun";
-          discountInfo.innerText = `Hemat: Rp ${(originalTotal - total).toLocaleString('id-ID')} (Diskon Tahunan)`;
-          discountInfo.classList.remove('hidden');
+       if (type === 'Jam') {
+          const hourlyPrice = dailyPrice / 8;
+          total = hourlyPrice * duration;
+          discountBadge.classList.add('hidden');
+       } else if (type === 'Hari') {
+          total = dailyPrice * duration;
+          discountBadge.classList.add('hidden');
+       } else if (type === 'Bulan') {
+          normalTotal = dailyPrice * 30 * duration;
+          total = normalTotal * 0.9;
+          discountBadge.innerText = `Hemat: Rp ${(normalTotal - total).toLocaleString()}`;
+          discountBadge.classList.remove('hidden');
+       } else if (type === 'Tahun') {
+          normalTotal = dailyPrice * 365 * duration;
+          total = normalTotal * 0.7;
+          discountBadge.innerText = `Hemat: Rp ${(normalTotal - total).toLocaleString()}`;
+          discountBadge.classList.remove('hidden');
        }
-
-       totalDisplay.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+       totalDisplay.innerText = `Rp ${parseInt(total).toLocaleString()}`;
     }
 
-    inpDuration.addEventListener('input', calcTotal);
-    inpUnitType.addEventListener('change', calcTotal); // Hitung ulang saat ganti tipe
-
-    // NAVIGASI STEP
-    document.getElementById('btnToStep2').addEventListener('click', () => {
-       const name = document.getElementById('inpName').value;
-       const loc = document.getElementById('inpProjectLoc').value;
-       const date = document.getElementById('inpDate').value;
-       if(!name || !loc || !date) { alert('Lengkapi Data Penyewa!'); return; }
-       window.showStep(2);
+    inpDur.addEventListener('input', calculateTotal);
+    inpType.addEventListener('change', () => {
+       if (inpType.value === 'Jam') { inpDur.value = 50; alert("Min. Sewa 50 Jam"); }
+       else { inpDur.value = 1; }
+       calculateTotal();
     });
-
-    // UPLOAD SIMULASI
-    let uploadedFileName = "";
-    document.getElementById('inpFile').addEventListener('change', function() {
-       if(this.files && this.files[0]) {
-          uploadedFileName = this.files[0].name;
-          document.getElementById('filePreviewText').innerHTML = `<span class="text-4xl text-green-500">✅</span><p class="font-bold">${uploadedFileName}</p>`;
+    
+    inpDur.addEventListener('change', () => {
+       if (inpType.value === 'Jam' && parseInt(inpDur.value) < 50) {
+          inpDur.value = 50;
+          calculateTotal();
        }
     });
 
-    document.getElementById('btnToStep3').addEventListener('click', () => {
-       if(!uploadedFileName) { alert('Wajib Upload Dokumen!'); return; }
-       window.showStep(3);
+    // 3. SUBMIT FORM
+    const form = document.getElementById('rentalForm');
+    const btnSubmit = document.getElementById('btnToStep2');
+    const paymentUI = document.getElementById('paymentUI');
+
+    form.addEventListener('submit', async (e) => {
+       e.preventDefault();
+       if(paymentUI.classList.contains('hidden')) {
+           paymentUI.classList.remove('hidden');
+           btnSubmit.innerText = "Konfirmasi Pembayaran";
+           return;
+       }
+       btnSubmit.innerText = "Memproses...";
+       btnSubmit.disabled = true;
+
+       const formData = new FormData();
+       formData.append('customer_name', document.getElementById('inpName').value);
+       formData.append('project_loc', document.getElementById('inpProjectLoc').value);
+       formData.append('product_id', mProductId.value);
+       formData.append('start_date', document.getElementById('inpDate').value);
+       formData.append('duration', `${inpDur.value} ${inpType.value}`);
+       formData.append('total_rental_fee', totalDisplay.innerText.replace(/[Rp,.]/g, '').trim());
+       const fileInput = document.getElementById('inpFile');
+       if(fileInput.files[0]) formData.append('sim_document', fileInput.files[0]);
+
+       try {
+          const res = await fetch(`${API_URL}/checkout`, { method: 'POST', body: formData });
+          const result = await res.json();
+          if(result.success) {
+              alert(`✅ Pesanan Berhasil!\nStatus: Menunggu Verifikasi Admin`);
+              modal.classList.add('hidden');
+          } else {
+              alert('Gagal: ' + result.message);
+              btnSubmit.disabled = false;
+          }
+       } catch (error) {
+          alert('Server Error');
+          btnSubmit.disabled = false;
+       }
     });
-
-    // PAYMENT SIMULASI
-    document.querySelectorAll('.pay-method').forEach(btn => {
-       btn.addEventListener('click', () => {
-          const bank = btn.getAttribute('data-bank');
-          window.showStep(4);
-          document.getElementById('loadingSpinner').classList.remove('hidden');
-          document.getElementById('vaDisplay').classList.add('hidden');
-          setTimeout(() => {
-             document.getElementById('loadingSpinner').classList.add('hidden');
-             document.getElementById('vaDisplay').classList.remove('hidden');
-             document.getElementById('vaNumber').innerText = `880${Math.floor(Math.random() * 1000000000)}`;
-          }, 1500);
-       });
-    });
-
-    // FINAL SUBMIT
-    document.getElementById('btnSimulatePay').addEventListener('click', () => {
-       const orders = JSON.parse(localStorage.getItem('db_orders')) || [];
-       
-       // Ambil data untuk disimpan
-       const unitType = inpUnitType.value; // hari/bulan/tahun
-       const duration = inpDuration.value;
-       const finalTotal = parseInt(totalDisplay.innerText.replace(/\D/g, ''));
-
-       orders.push({
-          id: "ORD-" + Date.now(),
-          customerName: document.getElementById('inpName').value,
-          projectLoc: document.getElementById('inpProjectLoc').value,
-          item: mName.innerText,
-          // Format Durasi agar Admin tau satuannya (misal: "3 Bulan")
-          duration: `${duration} ${unitType.charAt(0).toUpperCase() + unitType.slice(1)}`, 
-          total: finalTotal,
-          date: new Date().toLocaleString('id-ID'),
-          docName: uploadedFileName, 
-          status: 'PAID_VERIFY'
-       });
-       localStorage.setItem('db_orders', JSON.stringify(orders));
-
-       alert('✅ Pembayaran Berhasil! \nStatus: Menunggu Verifikasi Dokumen oleh Admin.');
-       modal.classList.add('hidden');
-       window.location.href = '/products';
-    });
-
   });
 </script>
