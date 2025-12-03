@@ -16,7 +16,7 @@
     "@astrojs/starlight": "^0.36.2",
     "@tailwindcss/vite": "^4.1.17",
     "@types/leaflet": "^1.9.21",
-    "astro": "^5.15.9",
+    "astro": "^5.16.3",
     "astro-compressor": "^1.2.0",
     "clipboard": "^2.0.11",
     "cors": "^2.8.5",
