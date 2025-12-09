@@ -3,297 +3,304 @@ import MainLayout from "@/layouts/MainLayout.astro";
 ---
 
 <MainLayout title="Admin Dashboard | RentHeavyPro">
-  <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8">
-    
-    <div class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gray-200 dark:border-neutral-700 pb-6">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Admin Dashboard</h1>
-        <p class="text-gray-500 mt-1">Database Status: <span class="text-green-600 font-bold">● Terhubung (sdb_rent)</span></p>
-      </div>
-      <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 transition">Logout</button>
-    </div>
+  <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8">
+    
+    <div class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gray-200 dark:border-neutral-700 pb-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Admin Dashboard</h1>
+        <p class="text-gray-500 mt-1">Database Status: <span class="text-green-600 font-bold">● Terhubung (sdb_rent)</span></p>
+      </div>
+      <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 transition">Logout</button>
+    </div>
 
-    <div class="flex space-x-4 mb-6 overflow-x-auto pb-2">
-      <button onclick="switchTab('orders')" id="tabOrders" class="px-6 py-3 rounded-lg font-bold bg-white shadow text-orange-600 border border-orange-200 transition whitespace-nowrap">📋 Verifikasi Order</button>
-      <button onclick="switchTab('products')" id="tabProducts" class="px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100 transition whitespace-nowrap">📦 Kelola Unit</button>
-      <button onclick="switchTab('gps')" id="tabGPS" class="px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100 transition whitespace-nowrap">📡 GPS Tracking</button>
-    </div>
+    <div class="flex space-x-4 mb-6 overflow-x-auto pb-2">
+      <button onclick="switchTab('orders')" id="tabOrders" class="px-6 py-3 rounded-lg font-bold bg-white shadow text-orange-600 border border-orange-200 transition whitespace-nowrap">📋 Verifikasi Order</button>
+      <button onclick="switchTab('products')" id="tabProducts" class="px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100 transition whitespace-nowrap">📦 Kelola Unit</button>
+      <button onclick="switchTab('gps')" id="tabGPS" class="px-6 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-100 transition whitespace-nowrap">📡 GPS Tracking</button>
+    </div>
 
-    <div id="panelOrders" class="space-y-6">
-       <div class="bg-white p-6 rounded-xl shadow border dark:bg-neutral-900 dark:border-neutral-700">
-          <div class="flex justify-between items-center mb-4">
-              <h3 class="font-bold text-lg text-gray-800 dark:text-white">Antrian Pesanan Masuk</h3>
-              <button onclick="fetchOrders()" class="text-blue-600 text-sm hover:underline flex items-center gap-1">🔄 Refresh Data</button>
-          </div>
-          
-          <div id="orderList" class="space-y-4">
-              <p class="text-center py-10 text-gray-400">Memuat data pesanan...</p>
-          </div>
-       </div>
-    </div>
+    <div id="panelOrders" class="space-y-6">
+       <div class="bg-white p-6 rounded-xl shadow border dark:bg-neutral-900 dark:border-neutral-700">
+          <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-lg text-gray-800 dark:text-white">Antrian Pesanan Masuk</h3>
+              <button onclick="fetchOrders()" class="text-blue-600 text-sm hover:underline flex items-center gap-1">🔄 Refresh Data</button>
+          </div>
+          
+          <div id="orderList" class="space-y-4">
+              <p class="text-center py-10 text-gray-400">Memuat data pesanan...</p>
+          </div>
+       </div>
+    </div>
 
-    <div id="panelProducts" class="hidden space-y-6">
-       <div class="bg-orange-50 p-6 rounded-xl border border-orange-200 dark:bg-neutral-800 dark:border-neutral-700">
-          <h3 class="font-bold text-lg mb-4 text-orange-800 dark:text-orange-400">➕ Tambah Unit Baru</h3>
-          <form id="addProductForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <input type="text" id="pName" placeholder="Nama Unit" class="border p-2 rounded w-full" required>
-             <input type="number" id="pPrice" placeholder="Harga Sewa Harian" class="border p-2 rounded w-full" required>
-             <input type="number" id="pStock" placeholder="Stok Awal" class="border p-2 rounded w-full" required>
-             <input type="text" id="pImage" placeholder="Emoji (🚜) atau URL Gambar" class="border p-2 rounded w-full" required>
-             <textarea id="pDesc" class="md:col-span-2 border p-2 rounded w-full" placeholder="Deskripsi unit..." rows="2"></textarea>
-             <button type="submit" class="md:col-span-2 bg-orange-600 text-white font-bold py-2 rounded hover:bg-orange-700 transition">Simpan ke Database</button>
-          </form>
-       </div>
+    <div id="panelProducts" class="hidden space-y-6">
+       <div class="bg-orange-50 p-6 rounded-xl border border-orange-200 dark:bg-neutral-800 dark:border-neutral-700">
+          <h3 class="font-bold text-lg mb-4 text-orange-800 dark:text-orange-400">➕ Tambah Unit Baru</h3>
+<form id="addProductForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <input type="text" id="pName" placeholder="Nama Unit" class="border p-2 rounded w-full" required>
+             <select id="pCategory" class="border p-2 rounded w-full bg-white" required>
+                <option value="" disabled selected>Pilih Kategori</option>
+                <option value="Heavy">Heavy Duty (Berat)</option>
+                <option value="Light">Light Duty (Ringan)</option>
+             </select>
+             <input type="number" id="pPrice" placeholder="Harga Sewa Harian" class="border p-2 rounded w-full" required>
+             <input type="number" id="pStock" placeholder="Stok Awal" class="border p-2 rounded w-full" required>
+             <input type="text" id="pImage" placeholder="Emoji (🚜) atau URL Gambar" class="border p-2 rounded w-full" required>
+             <textarea id="pDesc" class="md:col-span-2 border p-2 rounded w-full" placeholder="Deskripsi unit..." rows="2"></textarea>
+             <button type="submit" class="md:col-span-2 bg-orange-600 text-white font-bold py-2 rounded hover:bg-orange-700 transition">Simpan ke Database</button>
+          </form>
+       </div>
 
-       <div class="bg-white p-6 rounded-xl shadow border dark:bg-neutral-900 dark:border-neutral-700 overflow-x-auto">
-          <h3 class="font-bold mb-4 text-gray-800 dark:text-white">Daftar Unit di Database</h3>
-          <table class="w-full text-sm text-left text-gray-600 dark:text-gray-400">
-             <thead class="bg-gray-100 dark:bg-neutral-800 uppercase text-xs">
-                <tr><th class="p-3 rounded-tl-lg">Unit</th><th class="p-3">Harga/Hari</th><th class="p-3">Stok</th><th class="p-3 rounded-tr-lg">ID</th></tr>
-             </thead>
-             <tbody id="productListBody"></tbody>
-          </table>
-       </div>
-    </div>
+       <div class="bg-white p-6 rounded-xl shadow border dark:bg-neutral-900 dark:border-neutral-700 overflow-x-auto">
+          <h3 class="font-bold mb-4 text-gray-800 dark:text-white">Daftar Unit di Database</h3>
+          <table class="w-full text-sm text-left text-gray-600 dark:text-gray-400">
+    <thead class="bg-gray-100 dark:bg-neutral-800 uppercase text-xs">
+                <tr><th class="p-3 rounded-tl-lg">Unit</th><th class="p-3">Kategori</th><th class="p-3">Harga/Hari</th><th class="p-3">Stok</th><th class="p-3 rounded-tr-lg">ID</th></tr>
+             </thead>
+             <tbody id="productListBody"></tbody>
+          </table>
+       </div>
+    </div>
 
-    <div id="panelGPS" class="hidden">
-       <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg h-[500px] relative overflow-hidden flex items-center justify-center group">
-          <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle, #4ade80 1px, transparent 1px); background-size: 40px 40px;"></div>
-          <div class="absolute top-4 right-4 text-xs font-mono text-green-400 border border-green-400 p-2 rounded bg-black/50 z-10">
-              SYSTEM: ONLINE<br>LATENCY: 24ms
-          </div>
-          
-          <div class="absolute top-1/4 left-1/4 text-4xl animate-bounce cursor-pointer group-hover:scale-110 transition" title="Excavator #204">
-             🚜 <span class="text-[10px] bg-black px-1 rounded block text-center -mt-8">Active</span>
-          </div>
-          <div class="absolute bottom-1/3 right-1/3 text-4xl animate-pulse cursor-pointer group-hover:scale-110 transition" title="Crane #05">
-             🏗️ <span class="text-[10px] bg-black px-1 rounded block text-center -mt-8">Idle</span>
-          </div>
-          
-          <div class="absolute bottom-6 left-6 text-sm font-mono bg-black/50 p-3 rounded border border-gray-700 z-10">
-             <p class="text-green-400">>> Tracking Unit #204 (Excavator PC200)</p>
-             <p class="text-gray-300">Location: -6.2088, 106.8456 (Jakarta Project A)</p>
-             <p class="text-gray-300">Speed: 0 km/h (Working)</p>
-          </div>
-       </div>
-    </div>
+    <div id="panelGPS" class="hidden">
+       <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg h-[500px] relative overflow-hidden flex items-center justify-center group">
+          <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle, #4ade80 1px, transparent 1px); background-size: 40px 40px;"></div>
+          <div class="absolute top-4 right-4 text-xs font-mono text-green-400 border border-green-400 p-2 rounded bg-black/50 z-10">
+              SYSTEM: ONLINE<br>LATENCY: 24ms
+          </div>
+          
+          <div class="absolute top-1/4 left-1/4 text-4xl animate-bounce cursor-pointer group-hover:scale-110 transition" title="Excavator #204">
+             🚜 <span class="text-[10px] bg-black px-1 rounded block text-center -mt-8">Active</span>
+          </div>
+          <div class="absolute bottom-1/3 right-1/3 text-4xl animate-pulse cursor-pointer group-hover:scale-110 transition" title="Crane #05">
+             🏗️ <span class="text-[10px] bg-black px-1 rounded block text-center -mt-8">Idle</span>
+          </div>
+          
+          <div class="absolute bottom-6 left-6 text-sm font-mono bg-black/50 p-3 rounded border border-gray-700 z-10">
+             <p class="text-green-400">>> Tracking Unit #204 (Excavator PC200)</p>
+             <p class="text-gray-300">Location: -6.2088, 106.8456 (Jakarta Project A)</p>
+             <p class="text-gray-300">Speed: 0 km/h (Working)</p>
+          </div>
+       </div>
+    </div>
 
-    <div id="verifyModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
-       <div class="bg-white w-full max-w-md rounded-xl p-6 text-center shadow-2xl transform transition-all scale-100">
-          <h3 class="font-bold text-xl mb-2 text-gray-800">Verifikasi Dokumen Legalitas</h3>
-          <p class="text-sm text-gray-500 mb-4">Pastikan SIM/SIO valid dan sesuai nama penyewa.</p>
-          
-          <div class="my-6 border-2 border-dashed border-blue-300 bg-blue-50 p-6 rounded-lg hover:bg-blue-100 transition">
-              <p class="text-sm text-gray-500 mb-2">File Uploaded:</p>
-              <div class="text-5xl mb-2">📄</div>
-              <a id="docLink" href="#" target="_blank" class="text-blue-600 font-bold underline text-lg break-all hover:text-blue-800">
-                 Lihat Dokumen Asli
-              </a>
-              <p class="text-xs text-gray-400 mt-2">*Klik link untuk membuka gambar/PDF</p>
-          </div>
+    <div id="verifyModal" class="fixed inset-0 z-50 hidden bg-black/80 flex items-center justify-center p-4">
+       <div class="bg-white w-full max-w-md rounded-xl p-6 text-center shadow-2xl transform transition-all scale-100">
+          <h3 class="font-bold text-xl mb-2 text-gray-800">Verifikasi Dokumen Legalitas</h3>
+          <p class="text-sm text-gray-500 mb-4">Pastikan SIM/SIO valid dan sesuai nama penyewa.</p>
+          
+          <div class="my-6 border-2 border-dashed border-blue-300 bg-blue-50 p-6 rounded-lg hover:bg-blue-100 transition">
+              <p class="text-sm text-gray-500 mb-2">File Uploaded:</p>
+              <div class="text-5xl mb-2">📄</div>
+              <a id="docLink" href="#" target="_blank" class="text-blue-600 font-bold underline text-lg break-all hover:text-blue-800">
+                 Lihat Dokumen Asli
+              </a>
+              <p class="text-xs text-gray-400 mt-2">*Klik link untuk membuka gambar/PDF</p>
+          </div>
 
-          <div class="grid grid-cols-2 gap-3">
-             <button onclick="updateStatus('rejected')" class="bg-red-100 text-red-600 font-bold py-3 rounded-lg hover:bg-red-200 transition border border-red-200">
-                ❌ Tolak
-             </button>
-             <button onclick="updateStatus('active')" class="bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition shadow-lg">
-                ✅ Approve & Aktifkan
-             </button>
-          </div>
-          <button onclick="closeModal()" class="mt-4 text-sm text-gray-500 hover:text-gray-800 underline">Tutup</button>
-       </div>
-    </div>
+          <div class="grid grid-cols-2 gap-3">
+             <button onclick="updateStatus('rejected')" class="bg-red-100 text-red-600 font-bold py-3 rounded-lg hover:bg-red-200 transition border border-red-200">
+                ❌ Tolak
+             </button>
+             <button onclick="updateStatus('active')" class="bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition shadow-lg">
+                ✅ Approve & Aktifkan
+             </button>
+          </div>
+          <button onclick="closeModal()" class="mt-4 text-sm text-gray-500 hover:text-gray-800 underline">Tutup</button>
+       </div>
+    </div>
 
-  </div>
+  </div>
 
-  <script>
-    const API_URL = 'http://localhost:5000/api';
-    const UPLOAD_URL = 'http://localhost:5000/uploads';
-    
-    let allOrders = []; // Variabel untuk menyimpan data order dari DB
-    let selectedOrderId = null;
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+    const UPLOAD_URL = 'http://localhost:5000/uploads';
+    
+    let allOrders = []; // Variabel untuk menyimpan data order dari DB
+    let selectedOrderId = null;
 
 // --- NAVIGASI TAB ---
-    window.switchTab = (tabName) => {
-        ['orders', 'products', 'gps'].forEach(t => {
-            // PERBAIKAN: Jika t adalah 'gps', gunakan 'GPS', jika tidak, gunakan kapitalisasi huruf pertama ('Orders', 'Products')
-            const idPart = t === 'gps' ? 'GPS' : t.charAt(0).toUpperCase() + t.slice(1);
-            
-            // Deactivate panels
-            const panel = document.getElementById(`panel${idPart}`);
-            if (panel) panel.classList.add('hidden'); // Menambah null check untuk keamanan
+    window.switchTab = (tabName) => {
+        ['orders', 'products', 'gps'].forEach(t => {
+            // PERBAIKAN: Jika t adalah 'gps', gunakan 'GPS', jika tidak, gunakan kapitalisasi huruf pertama ('Orders', 'Products')
+            const idPart = t === 'gps' ? 'GPS' : t.charAt(0).toUpperCase() + t.slice(1);
+            
+            // Deactivate panels
+            const panel = document.getElementById(`panel${idPart}`);
+            if (panel) panel.classList.add('hidden'); // Menambah null check untuk keamanan
 
-            // Deactivate buttons
-            const btn = document.getElementById(`tab${idPart}`);
-            if (btn) { // Menambah null check untuk keamanan
-                btn.classList.remove('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
-                btn.classList.add('text-gray-500', 'hover:bg-gray-100');
-            }
-        });
-        
-        // Tentukan ID yang benar untuk tab yang diaktifkan
-        const activeIdPart = tabName === 'gps' ? 'GPS' : tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            // Deactivate buttons
+            const btn = document.getElementById(`tab${idPart}`);
+            if (btn) { // Menambah null check untuk keamanan
+                btn.classList.remove('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
+                btn.classList.add('text-gray-500', 'hover:bg-gray-100');
+            }
+        });
+        
+        // Tentukan ID yang benar untuk tab yang diaktifkan
+        const activeIdPart = tabName === 'gps' ? 'GPS' : tabName.charAt(0).toUpperCase() + tabName.slice(1);
 
-        // Activate the new tab and panel
-        const activePanel = document.getElementById(`panel${activeIdPart}`);
-        if (activePanel) activePanel.classList.remove('hidden');
+        // Activate the new tab and panel
+        const activePanel = document.getElementById(`panel${activeIdPart}`);
+        if (activePanel) activePanel.classList.remove('hidden');
 
-        const activeBtn = document.getElementById(`tab${activeIdPart}`);
-        if (activeBtn) {
-            activeBtn.classList.add('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
-            activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-100');
-        }
+        const activeBtn = document.getElementById(`tab${activeIdPart}`);
+        if (activeBtn) {
+            activeBtn.classList.add('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
+            activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+        }
 
-        if(tabName === 'orders') fetchOrders();
-        if(tabName === 'products') fetchProducts();
-    };
+        if(tabName === 'orders') fetchOrders();
+        if(tabName === 'products') fetchProducts();
+    };
 
-    // --- 1. FETCH ORDERS (PB-09) ---
-    async function fetchOrders() {
-        try {
-            const res = await fetch(`${API_URL}/orders`);
-            allOrders = await res.json(); // Simpan ke variabel global
-            const list = document.getElementById('orderList');
-            
-            if(allOrders.length === 0) { list.innerHTML = '<p class="text-center text-gray-400 py-4">Belum ada pesanan masuk.</p>'; return; }
+    // --- 1. FETCH ORDERS (PB-09) ---
+    async function fetchOrders() {
+        try {
+            const res = await fetch(`${API_URL}/orders`);
+            allOrders = await res.json(); // Simpan ke variabel global
+            const list = document.getElementById('orderList');
+            
+            if(allOrders.length === 0) { list.innerHTML = '<p class="text-center text-gray-400 py-4">Belum ada pesanan masuk.</p>'; return; }
 
-            list.innerHTML = allOrders.map(o => {
-                let statusBadge = '';
-                let actionBtn = '';
+            list.innerHTML = allOrders.map(o => {
+                let statusBadge = '';
+                let actionBtn = '';
 
-                if(o.status === 'pending_verification') {
-                    statusBadge = `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold border border-yellow-200">⏳ Menunggu Verifikasi</span>`;
-                    actionBtn = `<button onclick="openVerifyModal('${o.order_id}', '${o.ktp_sim_image}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 shadow-sm transition flex items-center gap-1">🔍 Verifikasi</button>`;
-                } else if(o.status === 'active') {
-                    statusBadge = `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold border border-green-200">✅ Aktif / Dikirim</span>`;
-                } else if(o.status === 'rejected') {
-                    statusBadge = `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold border border-red-200">❌ Ditolak</span>`;
-                }
+                if(o.status === 'pending_verification') {
+                    statusBadge = `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-bold border border-yellow-200">⏳ Menunggu Verifikasi</span>`;
+                    actionBtn = `<button onclick="openVerifyModal('${o.order_id}', '${o.ktp_sim_image}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 shadow-sm transition flex items-center gap-1">🔍 Verifikasi</button>`;
+                } else if(o.status === 'active') {
+                    statusBadge = `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold border border-green-200">✅ Aktif / Dikirim</span>`;
+                } else if(o.status === 'rejected') {
+                    statusBadge = `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold border border-red-200">❌ Ditolak</span>`;
+                }
 
-                return `
-                <div class="border p-5 rounded-xl bg-white hover:shadow-md transition flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 ${o.status.includes('pending') ? 'border-l-yellow-400' : o.status === 'active' ? 'border-l-green-500' : 'border-l-gray-200'}">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <p class="font-bold text-gray-800 text-lg">${o.customer_name}</p>
-                            <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-mono border">${o.order_id}</span>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-1">Unit: <b>${o.item_name || 'Alat Berat'}</b> • Durasi: ${o.duration}</p>
-                        <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">📍 ${o.project_loc}</p>
-                        <div class="mt-2">${statusBadge}</div>
-                    </div>
-                    <div class="text-right w-full md:w-auto flex flex-row md:flex-col justify-between items-center md:items-end">
-                        <p class="font-bold text-orange-600 text-xl">Rp ${parseInt(o.total_rental_fee).toLocaleString()}</p>
-                        <div class="mt-0 md:mt-3">${actionBtn}</div>
-                    </div>
-                </div>`;
-            }).join('');
-        } catch (e) {
-            console.error(e);
-            document.getElementById('orderList').innerHTML = '<p class="text-red-500 text-center">Gagal mengambil data dari Server Backend (Port 5000).</p>';
-        }
-    }
+                return `
+                <div class="border p-5 rounded-xl bg-white hover:shadow-md transition flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 ${o.status.includes('pending') ? 'border-l-yellow-400' : o.status === 'active' ? 'border-l-green-500' : 'border-l-gray-200'}">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-gray-800 text-lg">${o.customer_name}</p>
+                            <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-mono border">${o.order_id}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">Unit: <b>${o.item_name || 'Alat Berat'}</b> • Durasi: ${o.duration}</p>
+                        <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">📍 ${o.project_loc}</p>
+                        <div class="mt-2">${statusBadge}</div>
+                    </div>
+                    <div class="text-right w-full md:w-auto flex flex-row md:flex-col justify-between items-center md:items-end">
+                        <p class="font-bold text-orange-600 text-xl">Rp ${parseInt(o.total_rental_fee).toLocaleString()}</p>
+                        <div class="mt-0 md:mt-3">${actionBtn}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('orderList').innerHTML = '<p class="text-red-500 text-center">Gagal mengambil data dari Server Backend (Port 5000).</p>';
+        }
+    }
 
-    // --- 2. FETCH PRODUCTS (PB-10) ---
-    async function fetchProducts() {
-        try {
-            const res = await fetch(`${API_URL}/products`);
-            const data = await res.json();
-            const tbody = document.getElementById('productListBody');
-            tbody.innerHTML = data.map(p => `
-                <tr class="border-b hover:bg-gray-50 transition dark:border-neutral-700">
-                    <td class="p-3 font-bold flex items-center gap-2 dark:text-white">
-                        <span class="text-xl">${p.image && p.image.length < 5 ? p.image : '📷'}</span> ${p.name}
-                    </td>
-                    <td class="p-3 dark:text-gray-300">Rp ${parseInt(p.price).toLocaleString()}</td>
-                    <td class="p-3 font-mono dark:text-gray-300">${p.stock}</td>
-                    <td class="p-3 text-gray-400 text-xs">#${p.id}</td>
-                </tr>
-            `).join('');
-        } catch (e) { console.error(e); }
-    }
+    // --- 2. FETCH PRODUCTS (PB-10) ---
+    async function fetchProducts() {
+        try {
+            const res = await fetch(`${API_URL}/products`);
+            const data = await res.json();
+            const tbody = document.getElementById('productListBody');
+            tbody.innerHTML = data.map(p => `
+                <tr class="border-b hover:bg-gray-50 transition dark:border-neutral-700">
+                    <td class="p-3 font-bold flex items-center gap-2 dark:text-white">
+                        <span class="text-xl">${p.image && p.image.length < 5 ? p.image : '📷'}</span> ${p.name}
+                    </td>
+                    <td class="p-3 font-bold text-xs ${p.category === 'Heavy' ? 'text-red-600' : 'text-blue-600'}">${p.category || 'Heavy'}</td>
+                    <td class="p-3 dark:text-gray-300">Rp ${parseInt(p.price).toLocaleString()}</td>
+                    <td class="p-3 font-mono dark:text-gray-300">${p.stock}</td>
+                    <td class="p-3 text-gray-400 text-xs">#${p.id}</td>
+                </tr>
+            `).join('');
+        } catch (e) { console.error(e); }
+    }
 
-    // --- 3. CRUD LOGIC ---
+    // --- 3. CRUD LOGIC ---
 
-    // PB-10: Tambah Produk
-    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const body = {
-            name: document.getElementById('pName').value,
-            price: document.getElementById('pPrice').value,
-            stock: document.getElementById('pStock').value,
-            image: document.getElementById('pImage').value,
-            description: document.getElementById('pDesc').value
-        };
+    // PB-10: Tambah Produk
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = {
+            name: document.getElementById('pName').value,
+            category: document.getElementById('pCategory').value,
+            price: document.getElementById('pPrice').value,
+            stock: document.getElementById('pStock').value,
+            image: document.getElementById('pImage').value,
+            description: document.getElementById('pDesc').value
+        };
 
-        try {
-            const res = await fetch(`${API_URL}/products`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            if(res.ok) {
-                alert('✅ Produk Berhasil Disimpan ke MySQL!');
-                e.target.reset();
-                fetchProducts();
-            }
-        } catch (e) { alert('Gagal simpan: ' + e); }
-    });
+        try {
+            const res = await fetch(`${API_URL}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if(res.ok) {
+                alert('✅ Produk Berhasil Disimpan ke MySQL!');
+                e.target.reset();
+                fetchProducts();
+            }
+        } catch (e) { alert('Gagal simpan: ' + e); }
+    });
 
-    // PB-09: Verifikasi Dokumen & Update Status
-    window.openVerifyModal = (orderId, docImage) => {
-        selectedOrderId = orderId;
-        const link = document.getElementById('docLink');
-        
-        if (docImage && docImage !== 'null' && docImage !== 'undefined') {
-            link.href = `${UPLOAD_URL}/${docImage}`;
-            link.innerText = `Lihat Dokumen (${docImage})`;
-            link.classList.remove('pointer-events-none', 'text-gray-400');
-            link.classList.add('text-blue-600', 'underline');
-        } else {
-            link.href = "#";
-            link.innerText = "Tidak ada file dokumen";
-            link.classList.add('pointer-events-none', 'text-gray-400');
-            link.classList.remove('text-blue-600', 'underline');
-        }
-        
-        document.getElementById('verifyModal').classList.remove('hidden');
-    };
+    // PB-09: Verifikasi Dokumen & Update Status
+    window.openVerifyModal = (orderId, docImage) => {
+        selectedOrderId = orderId;
+        const link = document.getElementById('docLink');
+        
+        if (docImage && docImage !== 'null' && docImage !== 'undefined') {
+            link.href = `${UPLOAD_URL}/${docImage}`;
+            link.innerText = `Lihat Dokumen (${docImage})`;
+            link.classList.remove('pointer-events-none', 'text-gray-400');
+            link.classList.add('text-blue-600', 'underline');
+        } else {
+            link.href = "#";
+            link.innerText = "Tidak ada file dokumen";
+            link.classList.add('pointer-events-none', 'text-gray-400');
+            link.classList.remove('text-blue-600', 'underline');
+        }
+        
+        document.getElementById('verifyModal').classList.remove('hidden');
+    };
 
-    window.closeModal = () => document.getElementById('verifyModal').classList.add('hidden');
+    window.closeModal = () => document.getElementById('verifyModal').classList.add('hidden');
 
-    window.updateStatus = async (status) => {
-        if(!selectedOrderId) return;
-        try {
-            // KIRIM PERUBAHAN STATUS KE BACKEND
-            await fetch(`${API_URL}/orders/${selectedOrderId}`, { 
-                method: 'PUT', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ status }) 
-            });
-            
-            // PB-13: Simulasi Notifikasi ke User (Opsional: Tambah Notif di sini)
-            alert(`Notifikasi Terkirim: Status pesanan ${selectedOrderId} diubah menjadi ${status.toUpperCase()}`);
+    window.updateStatus = async (status) => {
+        if(!selectedOrderId) return;
+        try {
+            // KIRIM PERUBAHAN STATUS KE BACKEND
+            await fetch(`${API_URL}/orders/${selectedOrderId}`, { 
+                method: 'PUT', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ status }) 
+            });
+            
+            // PB-13: Simulasi Notifikasi ke User (Opsional: Tambah Notif di sini)
+            alert(`Notifikasi Terkirim: Status pesanan ${selectedOrderId} diubah menjadi ${status.toUpperCase()}`);
 
-            // Close Modal dan Refresh List (Membuat Status Langsung Berubah di List)
-            closeModal();
-            fetchOrders(); 
-        } catch (e) { alert('Error update status: ' + e); }
-    };
+            // Close Modal dan Refresh List (Membuat Status Langsung Berubah di List)
+            closeModal();
+            fetchOrders(); 
+        } catch (e) { alert('Error update status: ' + e); }
+    };
 
-    // --- INIT ---
-    // Cek Login Admin
-    const role = localStorage.getItem('userRole');
-    if(localStorage.getItem('isLoggedIn') !== 'true' || role !== 'admin') {
-        alert('Akses Ditolak. Halaman ini khusus Admin.');
-        window.location.href = '/login';
-    }
-    
-    document.getElementById('logoutBtn').onclick = () => { 
-       localStorage.clear(); 
-       window.location.href = '/login'; 
-    };
-    
-    // Load First Tab
-    fetchOrders();
-  </script>
+    // --- INIT ---
+    // Cek Login Admin
+    const role = localStorage.getItem('userRole');
+    if(localStorage.getItem('isLoggedIn') !== 'true' || role !== 'admin') {
+        alert('Akses Ditolak. Halaman ini khusus Admin.');
+        window.location.href = '/login';
+    }
+    
+    document.getElementById('logoutBtn').onclick = () => { 
+       localStorage.clear(); 
+       window.location.href = '/login'; 
+    };
+    
+    // Load First Tab
+    fetchOrders();
+  </script>
 </MainLayout>

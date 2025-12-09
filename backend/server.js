@@ -69,15 +69,25 @@ app.get("/api/products", (req, res) => {
   });
 });
 
-// 3. TAMBAH PRODUK
+// 3. TAMBAH PRODUK (DIPERBAIKI UNTUK MENGAMBIL CATEGORY DARI FRONTEND)
 app.post("/api/products", (req, res) => {
-  const { name, price, stock, image, description } = req.body;
+  const { name, category, price, stock, image, description } = req.body; // <<< MENGAMBIL CATEGORY DARI BODY
   const sql =
-    "INSERT INTO products (name, category, price, stock, image, description) VALUES (?, 'Heavy', ?, ?, ?, ?)";
-  db.query(sql, [name, price, stock, image, description], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Produk tersimpan", id: result.insertId });
-  });
+    "INSERT INTO products (name, category, price, stock, image, description) VALUES (?, ?, ?, ?, ?, ?)"; // <<< CATEGORY DIGANTI DENGAN '?'
+  db.query(
+    sql,
+    [name, category, price, stock, image, description],
+    (err, result) => {
+      // <<< CATEGORY DITAMBAHKAN DI SINI
+      if (err) {
+        console.error(err);
+        return res
+          .status(500)
+          .json({ message: "Gagal simpan produk ke DB", error: err.message });
+      }
+      res.json({ message: "Produk tersimpan", id: result.insertId });
+    },
+  );
 });
 
 // 4. CHECKOUT (DENGAN UPLOAD & USER ID)
@@ -96,8 +106,8 @@ app.post("/api/checkout", upload.single("sim_document"), (req, res) => {
   const orderId = "TRX-" + Date.now();
 
   const sql = `INSERT INTO transactions 
-    (order_id, customer_name, project_loc, product_id, total_rental_fee, start_date, duration, ktp_sim_image, status, user_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending_verification', ?)`;
+    (order_id, customer_name, project_loc, product_id, total_rental_fee, start_date, duration, ktp_sim_image, status, user_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending_verification', ?)`;
 
   db.query(
     sql,
