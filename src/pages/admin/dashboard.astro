@@ -113,18 +113,36 @@ import MainLayout from "@/layouts/MainLayout.astro";
     let allOrders = []; // Variabel untuk menyimpan data order dari DB
     let selectedOrderId = null;
 
-    // --- NAVIGASI TAB ---
+// --- NAVIGASI TAB ---
     window.switchTab = (tabName) => {
         ['orders', 'products', 'gps'].forEach(t => {
-            document.getElementById(`panel${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
-            const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-            btn.classList.remove('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
-            btn.classList.add('text-gray-500', 'hover:bg-gray-100');
+            // PERBAIKAN: Jika t adalah 'gps', gunakan 'GPS', jika tidak, gunakan kapitalisasi huruf pertama ('Orders', 'Products')
+            const idPart = t === 'gps' ? 'GPS' : t.charAt(0).toUpperCase() + t.slice(1);
+            
+            // Deactivate panels
+            const panel = document.getElementById(`panel${idPart}`);
+            if (panel) panel.classList.add('hidden'); // Menambah null check untuk keamanan
+
+            // Deactivate buttons
+            const btn = document.getElementById(`tab${idPart}`);
+            if (btn) { // Menambah null check untuk keamanan
+                btn.classList.remove('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
+                btn.classList.add('text-gray-500', 'hover:bg-gray-100');
+            }
         });
-        document.getElementById(`panel${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.remove('hidden');
-        const activeBtn = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
-        activeBtn.classList.add('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
-        activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+        
+        // Tentukan ID yang benar untuk tab yang diaktifkan
+        const activeIdPart = tabName === 'gps' ? 'GPS' : tabName.charAt(0).toUpperCase() + tabName.slice(1);
+
+        // Activate the new tab and panel
+        const activePanel = document.getElementById(`panel${activeIdPart}`);
+        if (activePanel) activePanel.classList.remove('hidden');
+
+        const activeBtn = document.getElementById(`tab${activeIdPart}`);
+        if (activeBtn) {
+            activeBtn.classList.add('bg-white', 'shadow', 'text-orange-600', 'border', 'border-orange-200');
+            activeBtn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+        }
 
         if(tabName === 'orders') fetchOrders();
         if(tabName === 'products') fetchProducts();

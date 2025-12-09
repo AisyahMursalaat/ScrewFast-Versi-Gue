@@ -19,7 +19,8 @@ import MainLayout from "@/layouts/MainLayout.astro";
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-900 dark:border-neutral-700">
        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 dark:bg-neutral-800 dark:border-neutral-700 flex justify-between items-center">
           <h3 class="font-bold text-gray-700 dark:text-gray-200">📋 Riwayat Pesanan Saya</h3>
-          <button onclick="loadMyOrders()" class="text-xs text-blue-600 hover:underline flex items-center gap-1">🔄 Refresh Status</button>
+          <button onclick="loadMyOrders()" 
+          class="text-xs text-blue-600 hover:underline flex items-center gap-1">🔄 Refresh Status</button>
        </div>
        
        <div id="myOrderList" class="p-6 space-y-4 min-h-[200px]">
@@ -81,6 +82,7 @@ import MainLayout from "@/layouts/MainLayout.astro";
                     statusClass = "bg-gray-100 text-gray-600";
                 }
 
+                // PERBAIKAN SINTAKS DARI SINI: Template literal ditutup dengan benar.
                 return `
                 <div class="border border-gray-200 rounded-xl p-5 flex flex-col md:flex-row justify-between gap-4 bg-white hover:shadow-sm transition dark:bg-neutral-800 dark:border-neutral-700 group">
                     <div class="flex-1">
@@ -101,3 +103,19 @@ import MainLayout from "@/layouts/MainLayout.astro";
                            <span class="px-3 py-1 rounded-full text-xs font-bold border ${statusClass} inline-flex items-center gap-1">
                               ${statusBadge}
                            </span>
+                        </div>
+                    </div>
+                </div>`; // <-- Penutup template literal dan div yang benar
+            }).join(''); // <-- PENTING: Menutup map dan menggabungkan hasilnya
+        } catch (error) {
+            console.error('Gagal memuat pesanan:', error);
+            list.innerHTML = '<p class="text-center text-red-500 py-10">❌ Gagal memuat data. Cek koneksi server atau database.</p>';
+        } 
+    } // <-- Penutup fungsi loadMyOrders()
+
+    // 3. LOGOUT
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = '/';
+    });
+</script>
