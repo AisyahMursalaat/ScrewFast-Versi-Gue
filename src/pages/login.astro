@@ -7,46 +7,34 @@ import MainLayout from "@/layouts/MainLayout.astro";
     <div class="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg dark:bg-neutral-800">
       
       <div class="text-center">
-        <h2 class="text-3xl font-extrabold text-gray-800 dark:text-white">
-          RentHeavyPro Login
-        </h2>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Masuk untuk akses Dashboard & Sewa
-        </p>
+        <h2 class="text-3xl font-extrabold text-gray-800 dark:text-white">RentHeavyPro Login</h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Masuk untuk akses Dashboard</p>
       </div>
 
       <form id="loginForm" class="mt-8 space-y-6">
         <div class="-space-y-px rounded-md shadow-sm">
           <div>
             <label for="username" class="sr-only">Username</label>
-            <input id="username" name="username" type="text" required class="relative block w-full appearance-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-white" placeholder="Username">
+            <input id="username" type="text" required class="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Username">
           </div>
           <div>
             <label for="password" class="sr-only">Password</label>
-            <input id="password" name="password" type="password" required class="relative block w-full appearance-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm dark:bg-neutral-900 dark:border-neutral-700 dark:text-white" placeholder="Password">
+            <input id="password" type="password" required class="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Password">
           </div>
         </div>
 
-        <div>
-          <button type="submit" id="btnLogin" class="group relative flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-            Masuk
-          </button>
-        </div>
-        
-        <p id="errorMsg" class="hidden text-center text-sm text-red-500 font-bold bg-red-50 p-2 rounded border border-red-100"></p>
+        <button type="submit" id="btnLogin" class="w-full bg-orange-600 py-2 px-4 text-sm font-medium text-white rounded-md hover:bg-orange-700">Masuk</button>
+        <p id="errorMsg" class="hidden text-center text-sm text-red-500 font-bold mt-2"></p>
       </form>
       
       <div class="mt-6 border-t pt-4 text-center text-xs text-gray-400">
-        <p>Pastikan Backend (Port 5000) sudah jalan.</p>
+        <p>Admin: <b>admin</b> / <b>123</b> | User: <b>user</b> / <b>123</b></p>
       </div>
-
     </div>
   </div>
 
   <script>
-    // Konek ke Server Backend Kamu
-    const API_URL = 'http://localhost:5000/api'; 
-
+    const API_URL = 'http://localhost:5000/api';
     const form = document.getElementById('loginForm');
     const btnLogin = document.getElementById('btnLogin');
     const errorMsg = document.getElementById('errorMsg');
@@ -61,7 +49,6 @@ import MainLayout from "@/layouts/MainLayout.astro";
       const pass = document.getElementById('password').value;
 
       try {
-          // 1. KIRIM DATA KE BACKEND (XAMPP)
           const res = await fetch(`${API_URL}/login`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -71,29 +58,24 @@ import MainLayout from "@/layouts/MainLayout.astro";
           const result = await res.json();
 
           if (result.success) {
-              // 2. LOGIN SUKSES -> SIMPAN DATA ASLI DARI DATABASE
+              // SIMPAN DATA USER DARI DATABASE KE BROWSER
               localStorage.setItem('isLoggedIn', 'true');
-              localStorage.setItem('userRole', result.data.role); // 'admin' atau 'customer'
-              
-              // INI KUNCINYA: Simpan Nama Lengkap (full_name) dari Database
-              // Kalau kosong, pakai username sebagai cadangan
-              localStorage.setItem('username', result.data.full_name || result.data.username); 
-              localStorage.setItem('userId', result.data.id);
+              localStorage.setItem('userRole', result.data.role); 
+              localStorage.setItem('username', result.data.full_name || result.data.username);
+              localStorage.setItem('userId', result.data.id); // <--- INI PENTING!
 
-              // 3. REDIRECT SESUAI ROLE
+              alert(`Selamat Datang, ${result.data.full_name}!`);
+
               if (result.data.role === 'admin') {
                   window.location.href = '/admin/dashboard';
               } else {
-                  // Kalau user biasa, bisa ke dashboard atau langsung belanja
-                  window.location.href = '/products'; 
+                  window.location.href = '/dashboard';
               }
           } else {
-              // Login Gagal
-              throw new Error(result.message || "Username/Password Salah");
+              throw new Error(result.message);
           }
-
       } catch (err) {
-          errorMsg.innerText = err.message;
+          errorMsg.innerText = err.message || "Gagal konek ke server.";
           errorMsg.classList.remove('hidden');
           btnLogin.innerText = "Masuk";
           btnLogin.disabled = false;

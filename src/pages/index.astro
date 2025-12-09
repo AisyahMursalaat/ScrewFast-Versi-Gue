@@ -9,7 +9,7 @@ import FeaturesNavs from "@components/sections/features/FeaturesNavs.astro";
 import TestimonialsSection from "@components/sections/testimonials/TestimonialsSection.astro";
 import PricingSection from "@components/sections/pricing/PricingSection.astro";
 import FAQ from "@components/sections/misc/FAQ.astro";
-import AnnouncementBanner from "@components/ui/banners/AnnouncementBanner.astro";
+import AnnouncementBanner from "@components/ui/banners/AnnouncementBanner.astro"; // Tetap diimpor
 import heroImage from "@images/hero-image.avif";
 import faqs from "@data/faqs.json";
 import features from "@data/features.json";
@@ -31,117 +31,114 @@ const avatarSrcs: Array<string> = [
 <MainLayout>
   <AnnouncementBanner
     btnId="dismiss-button"
-    btnTitle="Explore ScrewFast on GitHub"
-    url="https://github.com/mearashadowfax/ScrewFast"
+    btnTitle="Lihat Repositori Kami"
+    url="https://github.com/AisyahMursalaat/ScrewFast-Versi-Gue"
   />
 
   <HeroSection
-    title=`Equip Your Projects with <span
-        class="text-yellow-500 dark:text-yellow-400">ScrewFast</span>`
-    subTitle="Top-quality hardware tools and expert construction services for every project need."
-    primaryBtn="Start Exploring"
+    title=`Sewa Alat Berat & Mobil Proyek <span
+        class="text-yellow-500 dark:text-yellow-400">RentHeavyPro</span>`
+    subTitle="Unit terawat dan layanan profesional untuk setiap proyek konstruksi Anda. Verifikasi dokumen legalitas wajib."
+    primaryBtn="Lihat Armada Unit"
     primaryBtnURL="/products"
-    secondaryBtn="Contact Sales Team"
-    secondaryBtnURL="/contact"
+    secondaryBtn="Login Staff / User"
+    secondaryBtnURL="/login"
     withReview={true}
     avatars={avatarSrcs}
-    rating=`<span class="font-bold">4.8</span> / 5`
-    starCount={4}
-    reviews=`From Over <span class="font-bold">12.8k</span> Reviews`
+    rating=`<span class="font-bold">4.9</span> / 5`
+    starCount={5}
+    reviews=`Dipercaya <span class="font-bold">500+</span> Klien`
     src={heroImage}
-    alt="Stack of ScrewFast product boxes containing assorted hardware tools"
+    alt="Alat berat konstruksi di lapangan"
   />
 
   <ClientsSection
-    title="Trusted by Industry Leaders"
-    subTitle="Experience the reliability chosen by industry giants."
+    title="Dipercaya oleh Kontraktor Ternama"
+    subTitle="Rasakan keandalan yang dipilih oleh pemimpin industri."
     partners={partnersData}
   />
 
   <FeaturesGeneral
-    title="Meeting Industry Demands"
-    subTitle="At ScrewFast, we tackle the unique challenges encountered in the hardware and construction sectors. From cutting-edge tools to expert services, we're dedicated to helping you overcome obstacles and achieve your goals."
+    title="Solusi Kebutuhan Proyek"
+    subTitle="Di RentHeavyPro, kami sediakan unit ready stock dan layanan teknis terbaik untuk kelancaran proyek. Dari SIM/SIO hingga mobilisasi unit, semua terpantau."
     src={featureImage}
-    alt="ScrewFast products in floating boxes"
+    alt="Dashboard sistem RentHeavyPro"
     features={features}
   />
 
   <FeaturesNavs
-    title=`Customize <span class="text-yellow-500 dark:text-yellow-400">ScrewFast</span>'s offerings to perfectly suit your hardware and construction needs.`
+    title=`Fitur Unggulan <span class="text-yellow-500 dark:text-yellow-400">RentHeavyPro</span> untuk kelancaran proyek Anda.`
     tabs={[
       {
-        heading: "Cutting-Edge Tools",
+        heading: "Unit Terbaik & Terawat",
         content:
-          "Empower your projects with ScrewFast's cutting-edge tools. Experience enhanced efficiency in construction management with our sophisticated automated solutions.",
+          "Unit kami sudah dicek dan siap operasional. Performa maksimal untuk setiap proyek konstruksi Anda.",
         svg: "tools",
         src: tools,
-        alt: "Yellow and black heavy equipment on brown grass field",
+        alt: "Dokumen dan peralatan proyek",
         first: true,
       },
       {
-        heading: "Intuitive Dashboards",
+        heading: "Tracking Real-Time (GPS)",
         content:
-          "Navigate with ease using ScrewFast's intuitive dashboards. Set up and oversee your projects seamlessly, with user-friendly interfaces designed for quick and effective workflow management.",
+          "Pantau lokasi dan status unit Anda secara langsung. Manajemen logistik unit menjadi lebih mudah (PB-13).",
         svg: "dashboard",
         src: dashboard,
-        alt: "A screenshot or graphic representation of the intuitive dashboard",
+        alt: "Tampilan dashboard tracking GPS",
         second: true,
       },
       {
-        heading: "Robust Features",
+        heading: "Verifikasi Legalitas (PB-09)",
         content:
-          "Minimize complexity, maximize productivity. ScrewFast's robust features are engineered to streamline your construction process, delivering results that stand out for their excellence.",
+          "Dokumen SIM/SIO dijamin keabsahannya. Proses verifikasi Admin yang cepat untuk mobilisasi unit.",
         svg: "house",
         src: construction,
-        alt: "Gray metal building frame near tower crane during daytime",
+        alt: "Struktur bangunan besi dengan crane",
       },
     ]}
   />
 
   <TestimonialsSection
-    title="Fast-Track Your Projects"
-    subTitle="At ScrewFast, we ensure a swift start with instant account setup. Experience the speed of construction redefined."
+    title="Akselerasi Proyek Anda"
+    subTitle="Kami memastikan unit tiba tepat waktu. Kecepatan dan keandalan diutamakan dalam setiap kontrak."
     ;
     testimonials={[
       {
         content:
-          "ScrewFast dramatically boosted our project efficiency. Setup was instant, and their rapid response times are phenomenal. Truly a game-changer in hardware and construction support!",
-        author: "Samantha Ruiz",
-        role: "Chief Operating Officer | ConstructIt Inc.",
+          "RentHeavyPro sangat membantu efisiensi proyek kami. Unitnya sehat, operatornya handal. Sangat direkomendasikan untuk kontraktor!",
+        author: "Budi Santoso",
+        role: "Site Manager | PT Bangun Jaya",
         avatarSrc:
-          "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?q=80&w=1453&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D8&auto=format&fit=facearea&facepad=2&w=320&h=320&q=80",
+          "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?q=80&w=320&h=320&q=80",
       },
     ]}
     statistics={[
       {
-        count: "70k+",
-        description:
-          "customers equipped — from DIY to major construction firms",
+        count: "200+",
+        description: "Unit Alat Berat & Mobil",
       },
       {
-        count: "35%",
-        description:
-          "uptick in project efficiency with ScrewFast tools and services",
+        count: "100%",
+        description: "Unit Terverifikasi & Layak Operasi",
       },
       {
-        count: "15.3%",
-        description:
-          "reduction in maintenance costs reported by long-term clients",
+        count: "24/7",
+        description: "Dukungan Teknis & Mekanik",
       },
       {
-        count: "2x",
-        description: "quicker assembly using innovative fastening solutions",
+        count: "Fast",
+        description: "Proses Administrasi Digital",
       },
     ]}
   />
 
   <PricingSection pricing={pricing} />
 
-  <FAQ title="Frequently<br />asked questions" faqs={faqs} />
+  <FAQ faqs={faqs} />
 
   <HeroSectionAlt
-    title="Let's Build Together"
-    subTitle="ScrewFast is an open-source template, meticulously crafted with Astro, Tailwind CSS, and Preline UI frameworks."
-    url="https://github.com/mearashadowfax/ScrewFast"
+    title="Mari Kembangkan Proyek Anda"
+    subTitle="RentHeavyPro adalah template modern yang sangat cepat, dibangun dengan Astro dan Tailwind CSS."
+    url="/products"
   />
 </MainLayout>

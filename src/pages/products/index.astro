@@ -6,209 +6,400 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
 <MainLayout title={pageTitle}>
   <div class="mx-auto max-w-[85rem] px-4 py-10 lg:py-14">
     <div class="text-center mb-10">
-      <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Katalog Armada (PB-01)</h2>
-      <p class="text-gray-500 mt-2">Unit dari Database sdb_rent.</p>
+      <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Katalog Armada (XAMPP)</h2>
+      <p class="text-gray-500 mt-2">Unit terawat, siap kerja. Data Real-time dari Database Server.</p>
       
-      <div class="mt-6 flex justify-center gap-4">
-         <input type="text" id="searchInput" placeholder="🔍 Cari nama alat..." class="border p-3 rounded-lg w-64 shadow-sm outline-none focus:ring-2 focus:ring-orange-500">
-         <select id="catFilter" class="border p-3 rounded-lg shadow-sm bg-white outline-none focus:ring-2 focus:ring-orange-500">
+      <div class="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+         <input type="text" id="searchInput" placeholder="🔍 Cari nama alat (misal: Excavator)..." class="border p-3 rounded-lg w-full sm:w-64 shadow-sm outline-none focus:ring-2 focus:ring-orange-500">
+         
+         <select id="catFilter" class="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 outline-none bg-white">
             <option value="all">Semua Kategori</option>
-            <option value="Heavy">Heavy Duty</option>
-            <option value="Light">Light Duty</option>
+            <option value="Heavy">Heavy Duty (Berat)</option>
+            <option value="Light">Light Duty (Ringan)</option>
+         </select>
+
+         <select id="priceFilter" class="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 outline-none bg-white">
+            <option value="default">Urutkan Harga</option>
+            <option value="low">Termurah</option>
+            <option value="high">Termahal</option>
          </select>
       </div>
     </div>
 
     <div id="productGrid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-       <div class="col-span-full text-center py-10 text-gray-500">Mengambil Data dari Backend...</div>
+       <div class="col-span-full text-center py-10 text-gray-500">
+          <span class="animate-pulse">⏳ Menghubungkan ke Server (Port 5000)...</span>
+       </div>
+    </div>
+    
+    <div id="emptyMsg" class="hidden col-span-full text-center py-10 text-gray-400">
+       Tidak ada unit yang cocok dengan pencarian.
     </div>
   </div>
 
   <div id="rentModal" class="fixed inset-0 z-[999] hidden bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
-     <div class="bg-white w-full max-w-lg rounded-xl p-6 dark:bg-neutral-900 my-8">
+     <div class="bg-white w-full max-w-lg rounded-xl p-6 dark:bg-neutral-900 my-8 shadow-2xl transition-all transform scale-100">
         
-        <div class="flex justify-between items-center mb-4 border-b pb-2">
-            <h3 class="font-bold text-xl text-gray-800 dark:text-white">Formulir Sewa</h3>
-            <button id="closeModal" class="text-gray-500 text-2xl">&times;</button>
+        <div class="flex justify-between items-center mb-6 border-b pb-4">
+            <div>
+               <h3 class="font-bold text-xl text-gray-800 dark:text-white">Sewa Unit</h3>
+               <p class="text-xs text-gray-500">ID Unit: <span id="mIdDisplay">#</span></p>
+            </div>
+            <button id="closeModal" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
         </div>
-        
-        <div class="flex items-center gap-4 mb-4 bg-blue-50 p-3 rounded">
-           <div id="mIcon" class="text-3xl">🚜</div>
+
+        <div class="flex items-center gap-4 mb-6 bg-blue-50 p-3 rounded border border-blue-100">
+           <div id="mIcon" class="text-4xl">🚜</div>
            <div>
               <h4 id="mName" class="font-bold text-gray-800">Nama Unit</h4>
-              <p id="mPrice" class="text-sm text-orange-600">Rp 0 / hari</p>
+              <p id="mPrice" class="text-sm text-orange-600 font-bold">Rp 0 / hari</p>
               <input type="hidden" id="mPriceRaw">
               <input type="hidden" id="mProductId">
            </div>
         </div>
+
+        <div class="flex justify-between text-xs font-bold text-gray-400 border-b pb-3 mb-5">
+           <span id="stepLabel1" class="text-blue-600 border-b-2 border-blue-600 pb-1 transition-colors">1. Detail Sewa</span>
+           <span id="stepLabel2" class="transition-colors">2. Legalitas</span>
+           <span id="stepLabel3" class="transition-colors">3. Pembayaran</span>
+        </div>
         
-        <form id="rentalForm" class="space-y-4">
-           <div>
-               <label class="block text-sm font-bold mb-1">Nama Penyewa</label>
-               <input id="inpName" type="text" class="w-full border p-2 rounded" required>
-           </div>
-           <div>
-               <label class="block text-sm font-bold mb-1">Lokasi Proyek</label>
-               <textarea id="inpAddr" class="w-full border p-2 rounded" rows="2" required></textarea>
-           </div>
-           
-           <div class="grid grid-cols-2 gap-3">
-              <div>
-                  <label class="block text-sm font-bold mb-1">Mulai Tanggal</label>
-                  <input id="inpDate" type="date" class="w-full border p-2 rounded" required>
-              </div>
-              <div>
-                  <label class="block text-sm font-bold mb-1">Durasi</label>
-                  <div class="flex">
-                      <input id="inpDur" type="number" value="1" min="1" class="w-16 border p-2 rounded-l text-center" required>
-                      <select id="inpType" class="w-full border p-2 rounded-r bg-gray-100 font-bold text-sm">
-                         <option value="Hari">Hari</option>
-                         <option value="Bulan">Bulan</option>
-                      </select>
+        <form id="rentalForm">
+            
+            <div id="step1" class="space-y-4">
+               <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Nama Penyewa / Perusahaan</label>
+                  <input id="inpName" type="text" class="w-full border p-2.5 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nama Lengkap" required>
+               </div>
+               <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Lokasi Proyek</label>
+                  <textarea id="inpAddr" class="w-full border p-2.5 rounded focus:ring-2 focus:ring-blue-500 outline-none" rows="2" placeholder="Alamat Lengkap Proyek" required></textarea>
+               </div>
+               
+               <div class="grid grid-cols-2 gap-3">
+                  <div>
+                     <label class="block text-xs font-bold text-gray-500 mb-1">Mulai Tanggal</label>
+                     <input id="inpDate" type="date" class="w-full border p-2.5 rounded" required>
                   </div>
-              </div>
-           </div>
+                  <div>
+                     <label class="block text-xs font-bold text-gray-500 mb-1">Durasi Sewa</label>
+                     <div class="flex">
+                         <input id="inpDur" type="number" value="1" min="1" class="w-16 border p-2.5 rounded-l text-center outline-none" required>
+                         <select id="inpType" class="w-full border p-2.5 rounded-r bg-gray-50 text-sm font-bold outline-none">
+                            <option value="Hari">Hari</option>
+                            <option value="Jam">Jam (Min 50)</option>
+                            <option value="Bulan">Bulan (Disc 10%)</option>
+                            <option value="Tahun">Tahun (Disc 30%)</option>
+                         </select>
+                     </div>
+                  </div>
+               </div>
+               
+               <div class="bg-gray-50 p-3 rounded text-right border border-gray-200">
+                  <p class="text-xs text-gray-500">Estimasi Biaya:</p>
+                  <span id="totalTxt" class="font-bold text-xl text-blue-700">Rp 0</span>
+                  <p id="discountInfo" class="text-xs text-green-600 font-bold mt-1 hidden">Hemat: Rp 0</p>
+               </div>
 
-           <div class="border-2 border-dashed border-gray-300 p-4 rounded text-center bg-gray-50">
-               <p class="text-sm font-bold mb-2">Upload SIM B2 Umum / SIO (Wajib)</p>
-               <input id="inpFile" type="file" accept="image/*,.pdf" class="w-full text-sm" required>
-           </div>
-           
-           <div id="paymentUI" class="hidden border-t pt-4 mt-4 bg-green-50 p-3 rounded text-center">
-              <p class="text-sm font-bold text-green-800">Pembayaran Terverifikasi Otomatis ✅</p>
-              <p class="text-xs text-gray-500">Sistem mendeteksi pembayaran lunas.</p>
-           </div>
+               <button type="button" onclick="nextStep(2)" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition mt-2 shadow-md">Lanjut: Upload Dokumen</button>
+            </div>
 
-           <div class="text-right font-bold text-lg text-blue-600 mt-2">
-              Total: <span id="totalTxt">Rp 0</span>
-           </div>
-           
-           <button type="submit" id="btnSubmit" class="w-full bg-orange-600 text-white font-bold py-3 rounded hover:bg-orange-700 mt-2">Bayar & Sewa</button>
+            <div id="step2" class="hidden space-y-4">
+               <div class="bg-yellow-50 p-3 rounded border border-yellow-200 text-sm text-yellow-800 flex items-start gap-2">
+                 <span>⚠️</span>
+                 <div><b>Syarat Wajib:</b> Upload Foto SIM B2 Umum / SIO Operator yang masih berlaku.</div>
+               </div>
+               
+               <div class="border-2 border-dashed border-gray-300 p-8 rounded-xl text-center cursor-pointer hover:bg-gray-50 transition relative group">
+                 <input type="file" id="inpFile" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,.pdf" required>
+                 <div id="filePreview">
+                    <div class="text-4xl mb-2 group-hover:scale-110 transition">📂</div>
+                    <p class="text-sm font-bold text-gray-600">Klik untuk Upload Dokumen</p>
+                    <p class="text-xs text-gray-400">Format: JPG, PNG, PDF (Max 5MB)</p>
+                 </div>
+               </div>
+
+               <div class="flex gap-3 pt-4">
+                  <button type="button" onclick="nextStep(1)" class="w-1/3 bg-gray-200 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Kembali</button>
+                  <button type="button" onclick="nextStep(3)" class="w-2/3 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-md">Lanjut Pembayaran</button>
+               </div>
+            </div>
+
+            <div id="step3" class="hidden space-y-4 text-center">
+               <h4 class="font-bold text-gray-700 mb-2">Pilih Metode Pembayaran</h4>
+               
+               <div class="grid grid-cols-2 gap-3 text-left">
+                  <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-blue-50 transition"><p class="font-bold text-blue-800">BCA</p><p class="text-xs text-gray-500">Virtual Account</p></div>
+                  <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-yellow-50 transition"><p class="font-bold text-yellow-600">Mandiri</p><p class="text-xs text-gray-500">Bill Payment</p></div>
+                  <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-orange-50 transition"><p class="font-bold text-orange-600">BNI</p><p class="text-xs text-gray-500">Virtual Account</p></div>
+                  <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-gray-50 transition"><p class="font-bold text-gray-800">QRIS</p><p class="text-xs text-gray-500">Scan & Pay</p></div>
+               </div>
+               
+               <div id="paymentProcess" class="hidden mt-6 p-5 bg-gray-100 rounded-xl border border-gray-200">
+                  <div id="spinner" class="animate-spin text-3xl mb-2">🔄</div>
+                  <p id="payStatusText" class="text-sm font-bold text-gray-600">Menghubungkan Payment Gateway...</p>
+                  
+                  <div id="vaResult" class="hidden mt-3">
+                      <p class="text-xs text-gray-500">Nomor Virtual Account:</p>
+                      <p class="text-2xl font-mono font-bold text-gray-800 tracking-widest my-2">8800 1234 5678</p>
+                  </div>
+               </div>
+
+               <div class="flex gap-3 mt-6">
+                  <button type="button" id="btnBack3" onclick="nextStep(2)" class="w-1/3 bg-gray-200 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Kembali</button>
+                  <button type="submit" id="btnFinalPay" class="w-2/3 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition shadow-md hidden">Saya Sudah Bayar</button>
+               </div>
+            </div>
         </form>
      </div>
   </div>
 
   <script>
     const API_URL = 'http://localhost:5000/api';
+    const UPLOAD_URL = 'http://localhost:5000/uploads';
+
     let allProducts = [];
 
-    // --- PB-01: Fetch Data dari Database ---
+    // 1. FETCH DATA DARI DATABASE XAMPP (PB-01)
     async function loadProducts() {
        try {
           const res = await fetch(`${API_URL}/products`);
+          if (!res.ok) throw new Error('Server Error');
           allProducts = await res.json();
           renderGrid(allProducts);
        } catch (e) {
-          document.getElementById('productGrid').innerHTML = '<p class="text-red-500 col-span-full text-center">Gagal Konek Backend (Port 5000)</p>';
+          document.getElementById('productGrid').innerHTML = `
+            <div class="col-span-full text-center py-10 bg-red-50 rounded-xl border border-red-200">
+                <p class="text-red-600 font-bold">Gagal terhubung ke Server Backend (Port 5000)</p>
+                <p class="text-sm text-red-400">Pastikan terminal "node server.js" sudah dijalankan.</p>
+            </div>`;
        }
     }
 
+    // Render Grid Produk
     function renderGrid(data) {
         const grid = document.getElementById('productGrid');
-        if(data.length === 0) { grid.innerHTML = '<p class="col-span-full text-center">Data Kosong.</p>'; return; }
+        const emptyMsg = document.getElementById('emptyMsg');
 
-        grid.innerHTML = data.map(p => `
-             <div class="border rounded-xl overflow-hidden shadow-sm bg-white hover:shadow-lg transition group">
-                <div class="h-48 bg-gray-100 flex items-center justify-center text-6xl">
-                    ${p.image.length < 5 ? p.image : '📷'}
+        if(data.length === 0) { 
+            grid.classList.add('hidden'); 
+            emptyMsg.classList.remove('hidden'); 
+            return; 
+        }
+        
+        grid.classList.remove('hidden');
+        emptyMsg.classList.add('hidden');
+        
+        grid.innerHTML = data.map(p => {
+            // Cek gambar (Emoji vs File URL)
+            const imgHTML = (p.image && p.image.length < 5) 
+                ? `<div class="text-6xl">${p.image}</div>` 
+                : `<img src="${p.image.startsWith('http') ? p.image : UPLOAD_URL + '/' + p.image}" class="w-full h-full object-cover">`;
+
+            return `
+             <div class="border rounded-xl overflow-hidden shadow-sm bg-white hover:shadow-lg transition dark:bg-neutral-900 dark:border-neutral-700 group overflow-hidden">
+                <div class="h-52 bg-gray-100 flex items-center justify-center group-hover:scale-105 transition duration-300 relative">
+                    ${imgHTML}
+                    <span class="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded">${p.category || 'Heavy'}</span>
                 </div>
                 <div class="p-5">
-                   <h3 class="font-bold text-lg text-gray-800 dark:text-white">${p.name}</h3>
-                   <p class="text-sm text-gray-500 mb-2">${p.category}</p>
-                   <p class="text-orange-600 font-bold text-xl">Rp ${parseInt(p.price).toLocaleString()}/hari</p>
-                   <button onclick="openModal(${p.id}, '${p.name}', ${p.price}, '${p.image}')" class="w-full mt-4 bg-gray-900 text-white py-2 rounded font-bold hover:bg-gray-800 transition">Sewa</button>
+                   <h3 class="font-bold text-lg text-gray-800 dark:text-white mb-1">${p.name}</h3>
+                   <p class="text-sm text-gray-500 line-clamp-2">${p.description || 'Ready unit.'}</p>
+                   
+                   <div class="flex justify-between items-end mt-4">
+                       <div>
+                           <p class="text-xs text-gray-400">Harga Sewa</p>
+                           <p class="text-orange-600 font-bold text-xl">Rp ${parseInt(p.price).toLocaleString()}<span class="text-xs text-gray-500 font-normal">/hari</span></p>
+                       </div>
+                       <button onclick="openModal(${p.id}, '${p.name}', ${p.price}, '${p.image}')" class="bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition shadow-md">Sewa</button>
+                   </div>
                 </div>
              </div>
-        `).join('');
+        `}).join('');
     }
 
-    // --- PB-02: Filter Mobil ---
+    // --- PB-02: FILTER & SEARCH ---
     function filterProducts() {
         const term = document.getElementById('searchInput').value.toLowerCase();
         const cat = document.getElementById('catFilter').value;
-        const filtered = allProducts.filter(p => {
+        const sort = document.getElementById('priceFilter').value;
+        
+        let filtered = allProducts.filter(p => {
             const matchName = p.name.toLowerCase().includes(term);
             const matchCat = cat === 'all' || p.category === cat;
             return matchName && matchCat;
         });
+
+        if (sort === 'low') filtered.sort((a, b) => a.price - b.price);
+        if (sort === 'high') filtered.sort((a, b) => b.price - a.price);
+
         renderGrid(filtered);
     }
     document.getElementById('searchInput').addEventListener('input', filterProducts);
     document.getElementById('catFilter').addEventListener('change', filterProducts);
+    document.getElementById('priceFilter').addEventListener('change', filterProducts);
 
-    // --- MODAL LOGIC ---
+    // --- LOGIKA MODAL & WIZARD ---
     const modal = document.getElementById('rentModal');
-    const form = document.getElementById('rentalForm');
-    const btnSubmit = document.getElementById('btnSubmit');
-    const paymentUI = document.getElementById('paymentUI');
-    const mPriceRaw = document.getElementById('mPriceRaw');
     const inpDur = document.getElementById('inpDur');
     const inpType = document.getElementById('inpType');
     const totalTxt = document.getElementById('totalTxt');
+    const mPriceRaw = document.getElementById('mPriceRaw');
+    const mProductId = document.getElementById('mProductId');
+    const discountInfo = document.getElementById('discountInfo');
 
     window.openModal = (id, name, price, img) => {
-       document.getElementById('mName').innerText = name;
-       document.getElementById('mPrice').innerText = `Rp ${parseInt(price).toLocaleString()} / hari`;
-       document.getElementById('mIcon').innerText = img.length < 5 ? img : '📷';
-       document.getElementById('mProductId').value = id;
-       mPriceRaw.value = price;
-       
-       form.reset();
-       paymentUI.classList.add('hidden');
-       btnSubmit.innerText = "Bayar & Sewa";
-       btnSubmit.disabled = false;
-       modal.classList.remove('hidden');
-       calcTotal();
-    };
-    
-    document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
-
-    // Hitung Harga
-    function calcTotal() {
-       const p = parseInt(mPriceRaw.value);
-       const d = parseInt(inpDur.value);
-       const t = inpType.value;
-       let total = (t === 'Bulan') ? (p * 30 * d) * 0.9 : p * d;
-       totalTxt.innerText = `Rp ${total.toLocaleString()}`;
-    }
-    inpDur.addEventListener('input', calcTotal);
-    inpType.addEventListener('change', calcTotal);
-
-    // --- PB-08 & PB-09: Submit dengan Upload File ---
-    form.addEventListener('submit', async (e) => {
-       e.preventDefault();
-       
-       // Simulasi Pembayaran
-       if(paymentUI.classList.contains('hidden')) {
-           btnSubmit.innerText = "Memproses Pembayaran...";
-           setTimeout(() => {
-               paymentUI.classList.remove('hidden');
-               btnSubmit.innerText = "Konfirmasi Pesanan";
-           }, 1500);
+       // Cek Login (PB-03)
+       if (localStorage.getItem('isLoggedIn') !== 'true') {
+           if(confirm('Silakan Login terlebih dahulu untuk menyewa unit.')) window.location.href = '/login';
            return;
        }
 
-       // Kirim ke Backend
-       const formData = new FormData();
-       formData.append('customer_name', document.getElementById('inpName').value);
-       formData.append('project_loc', document.getElementById('inpAddr').value);
-       formData.append('product_id', document.getElementById('mProductId').value);
-       formData.append('start_date', document.getElementById('inpDate').value);
-       formData.append('duration', `${inpDur.value} ${inpType.value}`);
-       formData.append('total_rental_fee', totalTxt.innerText.replace(/\D/g, ''));
-       formData.append('doc_sim', document.getElementById('inpFile').files[0]);
+       document.getElementById('mName').innerText = name;
+       document.getElementById('mPrice').innerText = `Rp ${parseInt(price).toLocaleString()} / hari`;
+       document.getElementById('mIdDisplay').innerText = `#${id}`;
+       
+       const iconEl = document.getElementById('mIcon');
+       if(img.length < 5) iconEl.innerHTML = img; 
+       else iconEl.innerHTML = `<img src="${img.startsWith('http') ? img : UPLOAD_URL + '/' + img}" class="w-12 h-12 object-cover rounded">`;
 
-       try {
-          const res = await fetch(`${API_URL}/checkout`, { method: 'POST', body: formData });
-          const result = await res.json();
-          if(result.success) {
-              alert('✅ Pesanan Berhasil Masuk Database!\nMenunggu Verifikasi Admin.');
-              modal.classList.add('hidden');
-              window.location.reload();
-          } else {
-              alert('Gagal: ' + result.message);
-          }
-       } catch (err) { alert('Error Server'); }
+       mPriceRaw.value = price;
+       mProductId.value = id;
+       
+       // Reset Form
+       document.getElementById('rentalForm').reset();
+       document.getElementById('inpName').value = localStorage.getItem('username') || '';
+       document.getElementById('filePreview').innerHTML = '<div class="text-4xl mb-2">📂</div><p class="text-sm font-bold text-gray-600">Klik Upload Dokumen</p>';
+       document.getElementById('paymentProcess').classList.add('hidden');
+       document.getElementById('btnFinalPay').classList.add('hidden');
+       document.getElementById('btnBack3').classList.remove('hidden');
+       
+       inpType.value = "Hari"; 
+       inpDur.value = 1;
+       
+       nextStep(1);
+       modal.classList.remove('hidden');
+       calculateTotal();
+    };
+
+    document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
+
+    // Navigasi Step
+    window.nextStep = (step) => {
+        [1,2,3].forEach(n => document.getElementById(`step${n}`).classList.add('hidden'));
+        document.getElementById(`step${step}`).classList.remove('hidden');
+        [1,2,3].forEach(n => {
+            const lbl = document.getElementById(`stepLabel${n}`);
+            lbl.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+            if(n <= step) lbl.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+        });
+    };
+
+    // Kalkulator
+    function calculateTotal() {
+       const p = parseInt(mPriceRaw.value);
+       let d = parseInt(inpDur.value);
+       const t = inpType.value;
+       let total = 0, normalTotal = 0;
+
+       if(t === 'Jam') {
+          total = (p / 8) * d;
+          discountInfo.classList.add('hidden');
+       } else if(t === 'Hari') {
+          total = p * d;
+          discountInfo.classList.add('hidden');
+       } else if(t === 'Bulan') {
+          normalTotal = (p * 30) * d;
+          total = normalTotal * 0.9; 
+          discountInfo.innerText = `Hemat: Rp ${(normalTotal - total).toLocaleString()} (Disc 10%)`;
+          discountInfo.classList.remove('hidden');
+       } else if(t === 'Tahun') {
+          normalTotal = (p * 365) * d;
+          total = normalTotal * 0.7;
+          discountInfo.innerText = `Hemat: Rp ${(normalTotal - total).toLocaleString()} (Disc 30%)`;
+          discountInfo.classList.remove('hidden');
+       }
+       totalTxt.innerText = `Rp ${parseInt(total).toLocaleString()}`;
+    }
+
+    inpDur.addEventListener('input', calculateTotal);
+    inpType.addEventListener('change', () => {
+        if(inpType.value === 'Jam') { inpDur.value = 50; alert('ℹ️ Sewa Per Jam: Minimal 50 Jam'); }
+        else { inpDur.value = 1; }
+        calculateTotal();
+    });
+    inpDur.addEventListener('change', () => {
+       if(inpType.value === 'Jam' && parseInt(inpDur.value) < 50) {
+          inpDur.value = 50;
+          calculateTotal();
+       }
+    });
+
+    // File Preview
+    document.getElementById('inpFile').addEventListener('change', function() {
+        if(this.files[0]) {
+            document.getElementById('filePreview').innerHTML = `<div class="text-4xl mb-2 text-green-500">✅</div><p class="font-bold text-green-700">${this.files[0].name}</p>`;
+        }
+    });
+
+    // Payment Simulation
+    document.querySelectorAll('.pay-method').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('paymentProcess').classList.remove('hidden');
+            document.getElementById('spinner').classList.remove('hidden');
+            document.getElementById('payStatusText').innerText = "Menghubungkan ke Payment Gateway...";
+            document.getElementById('vaResult').classList.add('hidden');
+            document.getElementById('btnFinalPay').classList.add('hidden');
+
+            setTimeout(() => {
+                document.getElementById('spinner').classList.add('hidden');
+                document.getElementById('payStatusText').innerText = "Silakan Transfer ke:";
+                document.getElementById('vaResult').classList.remove('hidden');
+                document.getElementById('btnFinalPay').classList.remove('hidden');
+                document.getElementById('vaNumber').innerText = "8800 " + Math.floor(10000000 + Math.random() * 90000000);
+            }, 2000);
+        });
+    });
+
+    // --- 3. SUBMIT KE BACKEND (XAMPP) ---
+    document.getElementById('rentalForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btnFinalPay');
+        btn.innerText = "Memproses Order...";
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('customer_name', document.getElementById('inpName').value);
+        formData.append('project_loc', document.getElementById('inpAddr').value);
+        formData.append('product_id', mProductId.value);
+        formData.append('start_date', document.getElementById('inpDate').value);
+        formData.append('duration', `${inpDur.value} ${inpType.value}`);
+        formData.append('total_rental_fee', totalTxt.innerText.replace(/[Rp,.]/g, '').trim());
+        
+        // TAMBAHKAN USER ID (PENTING BUAT DASHBOARD USER)
+        formData.append('user_id', localStorage.getItem('userId'));
+
+        const fileInput = document.getElementById('inpFile');
+        if(fileInput.files[0]) formData.append('sim_document', fileInput.files[0]);
+
+        try {
+            const res = await fetch(`${API_URL}/checkout`, { method: 'POST', body: formData });
+            const result = await res.json();
+            
+            if(result.success) {
+                alert(`✅ PEMBAYARAN BERHASIL!\nID Order: ${result.orderId}\nStatus: Menunggu Verifikasi Admin.`);
+                modal.classList.add('hidden');
+                // Redirect ke Dashboard User
+                window.location.href = '/dashboard';
+            } else {
+                alert('Gagal: ' + result.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Terjadi kesalahan koneksi ke server.');
+        }
+        btn.disabled = false;
+        btn.innerText = "Saya Sudah Bayar";
     });
 
     loadProducts();
