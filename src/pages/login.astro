@@ -1,85 +1,188 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
+const pageTitle = "Login Masuk | RentHeavyPro";
 ---
 
-<MainLayout title="Login Masuk">
-  <div class="flex min-h-screen items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 dark:bg-neutral-900">
-    <div class="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg dark:bg-neutral-800">
-      
-      <div class="text-center">
-        <h2 class="text-3xl font-extrabold text-gray-800 dark:text-white">RentHeavyPro Login</h2>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Masuk untuk akses Dashboard</p>
-      </div>
+<MainLayout title={pageTitle}>
+  <div class="flex min-h-screen items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 dark:bg-neutral-900">
+    <div class="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg dark:bg-neutral-800">
+      
+      <div class="text-center">
+        <h2 id="formTitle" class="text-3xl font-extrabold text-gray-800 dark:text-white">RentHeavyPro Login</h2>
+        <p id="formSubtitle" class="mt-2 text-sm text-gray-600 dark:text-gray-400">Masuk untuk akses Dashboard</p>
+      </div>
 
-      <form id="loginForm" class="mt-8 space-y-6">
-        <div class="-space-y-px rounded-md shadow-sm">
-          <div>
-            <label for="username" class="sr-only">Username</label>
-            <input id="username" type="text" required class="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Username">
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input id="password" type="password" required class="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Password">
-          </div>
-        </div>
+            <form id="loginForm" class="mt-8 space-y-6">
+        <div class="-space-y-px rounded-md shadow-sm">
+          <div>
+            <label for="login_username" class="sr-only">Username</label>
+            <input id="login_username" type="text" required class="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Username">
+          </div>
+          <div>
+            <label for="login_password" class="sr-only">Password</label>
+            <input id="login_password" type="password" required class="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Password">
+          </div>
+        </div>
 
-        <button type="submit" id="btnLogin" class="w-full bg-orange-600 py-2 px-4 text-sm font-medium text-white rounded-md hover:bg-orange-700">Masuk</button>
-        <p id="errorMsg" class="hidden text-center text-sm text-red-500 font-bold mt-2"></p>
-      </form>
-      
-      <div class="mt-6 border-t pt-4 text-center text-xs text-gray-400">
-        <p>Admin: <b>admin</b> / <b>123</b> | User: <b>user</b> / <b>123</b></p>
-      </div>
-    </div>
-  </div>
+        <button type="submit" id="btnLogin" class="w-full bg-orange-600 py-2 px-4 text-sm font-medium text-white rounded-md hover:bg-orange-700">Masuk</button>
+        <p id="errorMsgLogin" class="hidden text-center text-sm text-red-500 font-bold mt-2"></p>
+      </form>
 
-  <script>
-    const API_URL = 'http://localhost:5000/api';
-    const form = document.getElementById('loginForm');
-    const btnLogin = document.getElementById('btnLogin');
-    const errorMsg = document.getElementById('errorMsg');
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      btnLogin.innerText = "Mengecek...";
-      btnLogin.disabled = true;
-      errorMsg.classList.add('hidden');
+            <form id="registerForm" class="mt-8 space-y-6 hidden">
+        <div class="-space-y-px rounded-md shadow-sm">
+          <div>
+            <label for="reg_fullname" class="sr-only">Nama Lengkap</label>
+            <input id="reg_fullname" type="text" required class="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Nama Lengkap">
+          </div>
+          <div>
+            <label for="reg_username" class="sr-only">Username</label>
+            <input id="reg_username" type="text" required class="relative block w-full border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Username Baru">
+          </div>
+          <div>
+            <label for="reg_password" class="sr-only">Password</label>
+            <input id="reg_password" type="password" required class="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm" placeholder="Password Baru">
+          </div>
+        </div>
 
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
+        <button type="submit" id="btnRegister" class="w-full bg-blue-600 py-2 px-4 text-sm font-medium text-white rounded-md hover:bg-blue-700">Daftar Akun Baru</button>
+        <p id="errorMsgRegister" class="hidden text-center text-sm text-red-500 font-bold mt-2"></p>
+      </form>
+      
+            <div class="mt-4 text-center">
+        <p id="switchText" class="text-sm text-gray-600 dark:text-gray-400">Belum punya akun? <a href="#" id="switchToRegister" class="text-orange-600 hover:text-orange-500 font-medium">Daftar Sekarang</a></p>
+      </div>
 
-      try {
-          const res = await fetch(`${API_URL}/login`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username: user, password: pass })
-          });
+      <div class="mt-6 border-t pt-4 text-center text-xs text-gray-400">
+        <p>Admin: <b>admin</b> / <b>123</b> | User: <b>user</b> / <b>123</b></p>
+      </div>
+    </div>
+  </div>
 
-          const result = await res.json();
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+    
+    // Elemen Formulir & Pesan
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+    const errorMsgLogin = document.getElementById('errorMsgLogin'); 
+    const errorMsgRegister = document.getElementById('errorMsgRegister'); 
+    const formTitle = document.getElementById('formTitle');
+    const formSubtitle = document.getElementById('formSubtitle');
+    const switchText = document.getElementById('switchText');
 
-          if (result.success) {
-              // SIMPAN DATA USER DARI DATABASE KE BROWSER
-              localStorage.setItem('isLoggedIn', 'true');
-              localStorage.setItem('userRole', result.data.role); 
-              localStorage.setItem('username', result.data.full_name || result.data.username);
-              localStorage.setItem('userId', result.data.id); // <--- INI PENTING!
+    // --- FUNGSI SWITCH FORM ---
+    switchText.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isLoginVisible = !loginForm.classList.contains('hidden');
 
-              alert(`Selamat Datang, ${result.data.full_name}!`);
+      loginForm.classList.toggle('hidden', isLoginVisible);
+      registerForm.classList.toggle('hidden', !isLoginVisible);
 
-              if (result.data.role === 'admin') {
-                  window.location.href = '/admin/dashboard';
-              } else {
-                  window.location.href = '/dashboard';
-              }
-          } else {
-              throw new Error(result.message);
-          }
-      } catch (err) {
-          errorMsg.innerText = err.message || "Gagal konek ke server.";
-          errorMsg.classList.remove('hidden');
-          btnLogin.innerText = "Masuk";
-          btnLogin.disabled = false;
-      }
-    });
-  </script>
+      if (isLoginVisible) {
+        formTitle.innerText = "Daftar Akun Baru";
+        formSubtitle.innerText = "Daftar sebagai pengguna baru untuk mulai menyewa.";
+        switchText.innerHTML = 'Sudah punya akun? <a href="#" id="switchToLogin" class="text-orange-600 hover:text-orange-500 font-medium">Masuk</a>';
+      } else {
+        formTitle.innerText = "RentHeavyPro Login";
+        formSubtitle.innerText = "Masuk untuk akses Dashboard";
+        switchText.innerHTML = 'Belum punya akun? <a href="#" id="switchToRegister" class="text-orange-600 hover:text-orange-500 font-medium">Daftar Sekarang</a>';
+      }
+    });
+
+
+    // --- 1. LOGIKA LOGIN ---
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btnLogin.innerText = "Mengecek...";
+      btnLogin.disabled = true;
+      errorMsgLogin.classList.add('hidden');
+
+      const user = document.getElementById('login_username').value; 
+      const pass = document.getElementById('login_password').value; 
+
+      try {
+          const res = await fetch(`${API_URL}/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username: user, password: pass })
+          });
+
+          const result = await res.json();
+
+          if (result.success) {
+              // SIMPAN DATA USER DARI DATABASE KE BROWSER
+              localStorage.setItem('isLoggedIn', 'true');
+              localStorage.setItem('userRole', result.data.role); 
+              localStorage.setItem('username', result.data.full_name || result.data.username);
+              localStorage.setItem('userId', result.data.id);
+
+              alert(`Selamat Datang, ${result.data.full_name || result.data.username}!`);
+
+              if (result.data.role === 'admin' || user.toLowerCase() === 'admin') {
+                  // Kunci Spesifik untuk Admin Dashboard (PENTING!)
+                  localStorage.setItem('adminId', result.data.id);
+                  localStorage.setItem('isAdminLoggedIn', 'true');
+                  window.location.href = '/admin/dashboard';
+              } else {
+                  window.location.href = '/dashboard';
+              }
+          } else {
+              throw new Error(result.message);
+          }
+      } catch (err) {
+          errorMsgLogin.innerText = err.message || "Gagal konek ke server.";
+          errorMsgLogin.classList.remove('hidden');
+          btnLogin.innerText = "Masuk";
+          btnLogin.disabled = false;
+      }
+    });
+
+
+    // --- 2. LOGIKA REGISTER ---
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btnRegister.innerText = "Mendaftarkan...";
+      btnRegister.disabled = true;
+      errorMsgRegister.classList.add('hidden');
+
+      const fullName = document.getElementById('reg_fullname').value;
+      const user = document.getElementById('reg_username').value;
+      const pass = document.getElementById('reg_password').value;
+
+      try {
+          // NOTE: Endpoint /register perlu Anda pastikan ada di server.js
+          const res = await fetch(`${API_URL}/register`, { 
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ full_name: fullName, username: user, password: pass })
+          });
+
+          const result = await res.json();
+
+          if (result.success) {
+              alert(`Akun ${user} berhasil dibuat! Silakan masuk.`);
+              
+              // Alihkan kembali ke form Login, isi username, dan kosongkan password
+              loginForm.classList.remove('hidden');
+              registerForm.classList.add('hidden');
+              formTitle.innerText = "RentHeavyPro Login";
+              formSubtitle.innerText = "Masuk untuk akses Dashboard";
+              switchText.innerHTML = 'Sudah punya akun? <a href="#" id="switchToLogin" class="text-orange-600 hover:text-orange-500 font-medium">Masuk</a>';
+              document.getElementById('login_username').value = user; 
+              document.getElementById('login_password').value = '';
+          } else {
+              throw new Error(result.message);
+          }
+      } catch (err) {
+          errorMsgRegister.innerText = err.message || "Gagal konek ke server.";
+          errorMsgRegister.classList.remove('hidden');
+      }
+      // Reset button Register terlepas dari error atau sukses
+      btnRegister.innerText = "Daftar Akun Baru";
+      btnRegister.disabled = false;
+    });
+  </script>
 </MainLayout>

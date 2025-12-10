@@ -1,155 +1,312 @@
 ---
-// File: src/pages/checkout.astro (FINAL BUG FIX VERSION)
+// File: src/pages/checkout.astro (FINAL FIX: WIZARD 3-STEP DENGAN OPSI BANK)
 import MainLayout from "@/layouts/MainLayout.astro";
 ---
-<MainLayout title="Rincian Pembayaran Uang Muka">
-  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-    
-    <h1 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white border-b pb-4">
-        Konfirmasi & Rincian Pembayaran Awal
-    </h1>
-    
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="lg:col-span-2 bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-neutral-700 h-fit">
-            <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">Rincian Tagihan</h3>
+<MainLayout title="Rincian Pembayaran">
+  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+    
+    <h1 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white border-b pb-4">
+        Konfirmasi & Pembayaran Penuh
+    </h1>
+    
+    {/* WARNING MULTI ITEM - Jika keranjang berisi lebih dari 1 item */}
+    <div id="warning-multi" class="hidden bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+        <p class="font-bold">⚠️ Perhatian!</p>
+        <p class="text-sm">Sistem pengiriman dokumen (SIM/SIO) hanya dapat memproses detail untuk item pertama di keranjang. Transaksi final akan mencakup **semua item** di keranjang.</p>
+    </div>
 
-            <div id="rincian-biaya-container" class="space-y-3">
-                <p class="text-center text-gray-500 py-4">Memuat rincian...</p>
-            </div>
+    <div class="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-neutral-700 h-fit">
+        
+        {/* Navigasi Step */}
+        <div class="flex justify-between text-xs font-bold text-gray-400 border-b pb-3 mb-5">
+            <span id="stepLabel1" class="text-blue-600 border-b-2 border-blue-600 pb-1 transition-colors">1. Rincian Tagihan</span>
+            <span id="stepLabel2" class="transition-colors">2. Legalitas & Kontrak</span>
+            <span id="stepLabel3" class="transition-colors">3. Konfirmasi Bayar</span>
+        </div>
 
-            <div class="mt-6 pt-4 border-t border-gray-300 dark:border-neutral-700">
-                <p class="text-sm font-bold text-gray-800 dark:text-white">Total Transfer Sekarang (50% DP):</p>
-                <p id="transfer-total-display" class="text-3xl font-bold text-orange-600 mt-1">Rp 0</p>
-            </div>
-        </div>
-
-        <div class="bg-gray-50 dark:bg-neutral-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-neutral-700 h-fit">
-            <h3 class="font-bold text-gray-900 dark:text-white text-lg mb-4">Transfer Uang Muka (50% DP)</h3>
+        <form id="uploadForm">
             
-            <div class="flex items-center gap-4 p-3 border rounded-lg bg-white dark:bg-neutral-800 mb-6">
-                <div class="w-14 h-10 bg-blue-700 text-white font-bold flex items-center justify-center rounded text-xs">BCA</div>
+            {/* STEP 1: Rincian Biaya Multi-Item */}
+            <div id="step1" class="space-y-4">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Rincian Item Sewa</h3>
+                <div id="rincian-biaya-container" class="space-y-3 p-1 border rounded-lg bg-gray-50 dark:bg-neutral-700">
+                    <p class="text-center text-gray-500 py-4">Memuat rincian...</p>
+                </div>
+
+                <div id="total-summary" class="mt-4 pt-4 border-t border-gray-300 dark:border-neutral-700 text-right">
+                    <p class="text-sm font-bold text-gray-800 dark:text-white">Total Tagihan Penuh:</p>
+                    <p id="transfer-total-display" class="text-3xl font-bold text-orange-600 mt-1">Rp 0</p>
+                </div>
+                
+                <button type="button" onclick="nextStep(2)" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Lanjut: Detail Kontrak</button>
+            </div>
+            
+            {/* STEP 2: Legalitas & Detail Kontrak (Digabung) */}
+            <div id="step2" class="hidden space-y-4">
+                <h3 class="font-bold text-gray-900 dark:text-white text-lg mb-4">Detail Kontrak & Dokumen</h3>
+
                 <div>
-                    <p class="font-bold text-gray-800 dark:text-white text-lg">123-456-7890</p>
-                    <p class="text-sm text-gray-500">a.n PT ScrewFast Indonesia</p>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nama Penyewa (Wajib)</label>
+                    <input type="text" id="inpName" required class="w-full border p-2 rounded-lg dark:bg-neutral-800" placeholder="Nama Lengkap">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Lokasi Proyek (Wajib)</label>
+                    <textarea id="inpProjectLoc" rows="2" required class="w-full border p-2 rounded-lg dark:bg-neutral-800" placeholder="Alamat Lengkap Proyek"></textarea>
+                </div>
+                <div class="pt-2">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Upload SIM/SIO (Wajib)</label>
+                    <input type="file" id="inpFile" accept="image/*,.pdf" required class="w-full border p-2 rounded-lg bg-white dark:bg-neutral-800 text-sm">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="nextStep(1)" class="w-1/3 bg-gray-200 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Kembali</button>
+                    <button type="button" onclick="nextStep(3)" class="w-2/3 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-md">Lanjut Pembayaran</button>
                 </div>
             </div>
 
-            <button id="btn-confirm" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition transform active:scale-95 disabled:opacity-50" disabled>
-                ✅ Saya Sudah Transfer
-            </button>
+            {/* STEP 3: Konfirmasi Pembayaran */}
+            <div id="step3" class="hidden space-y-4 text-center">
+                <h4 class="font-bold text-gray-700 mb-2">Pilih Metode Pembayaran</h4>
+
+                {/* Opsi Pembayaran Simulasi */}
+                <div id="payment-options" class="grid grid-cols-2 gap-3 text-left">
+                    <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-blue-50 transition"><p class="font-bold text-blue-800">BCA</p><p class="text-xs text-gray-500">Virtual Account</p></div>
+                    <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-yellow-50 transition"><p class="font-bold text-yellow-600">Mandiri</p><p class="text-xs text-gray-500">Bill Payment</p></div>
+                    <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-orange-50 transition"><p class="font-bold text-orange-600">BNI</p><p class="text-xs text-gray-500">Virtual Account</p></div>
+                    <div class="pay-method border p-3 rounded-lg cursor-pointer hover:border-blue-500 bg-gray-50 transition"><p class="font-bold text-gray-800">QRIS</p><p class="text-xs text-gray-500">Scan & Pay</p></div>
+                </div>
+                
+                {/* Detail Rekening Yang Terpilih (Default BCA) */}
+                <div id="bank-detail-display" class="mt-6 p-3 border rounded-lg bg-white dark:bg-neutral-800">
+                    <div class="flex items-center gap-4">
+                        <div id="bank-logo" class="w-14 h-10 bg-blue-700 text-white font-bold flex items-center justify-center rounded text-xs">BCA</div>
+                        <div>
+                            <p class="font-bold text-gray-800 dark:text-white text-lg">123-456-7890</p>
+                            <p class="text-sm text-gray-500">a.n PT ScrewFast Indonesia</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-center text-sm text-gray-600">Mohon transfer total penuh sebesar <b id="total-transfer-check">Rp 0</b> sebelum konfirmasi.</p>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="nextStep(2)" class="w-1/3 bg-gray-200 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Kembali</button>
+                    <button type="submit" id="btn-confirm" class="w-2/3 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition">
+                        ✅ Saya Sudah Transfer & Konfirmasi
+                    </button>
+                </div>
+            </div>
             
-            <a href="/products" class="block text-center text-sm text-gray-500 mt-4 hover:underline">Kembali ke Keranjang</a>
-        </div>
-        
-    </div>
-  </div>
+            <a href="/products" class="block text-center text-sm text-gray-500 mt-4 hover:underline">Kembali ke Katalog</a>
+
+        </form>
+    </div>
+        
+    </div>
 </MainLayout>
 
 <script>
-  // PENTING: Pindahkan fungsi helper ke dalam script agar tidak ada masalah scope
-  const formatRupiah = (number) => new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(number);
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- KONSTANTA & HELPER (Didefinisikan di dalam listener) ---
+    const API_URL = 'http://localhost:5000/api';
+    const formatRupiah = (number) => new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(number);
+    
+    // Ambil data user dari client storage
+    const getUserId = () => localStorage.getItem('userId');
+    const getUsername = () => localStorage.getItem('username') || '';
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const btnConfirm = document.getElementById('btn-confirm');
-    const btnCalculate = document.getElementById('btn-calculate-mobilization');
-    const rincianContainer = document.getElementById('rincian-biaya-container');
-    const transferTotalDisplay = document.getElementById('transfer-total-display');
-
-    // 1. Ambil data User & Cart dari Browser
-    const user = JSON.parse(localStorage.getItem('user'));
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // Perbaikan: Pastikan array cart tidak kosong sebelum mengakses index 0
-    const rentalItem = cart.length > 0 ? cart[0] : null; 
-
-    // Variabel Tagihan
-    let totalFullTagihan = 0;
-    let totalRentalFee = 0;
-    let downPayment = 0;
-    let remainingBalance = 0;
-    let deliveryFee = 0;
-    
-    if (rentalItem) {
-      totalRentalFee = rentalItem.total_rental_fee || 0;
-      deliveryFee = rentalItem.delivery_fee || 0;
-      downPayment = rentalItem.down_payment || 0;
-      remainingBalance = rentalItem.remaining_balance || 0;
-      totalFullTagihan = totalRentalFee + deliveryFee;
+    // Helper untuk menghitung tanggal selesai
+    function calculateEndDate(startDate, durationDays) {
+        if (!startDate || durationDays < 1) return 'Tanggal Selesai Invalid';
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + durationDays); 
+        return date.toISOString().split('T')[0];
     }
     
-    // 2. Cek Validasi Awal & Redirect jika data kosong
-    if (totalFullTagihan === 0 || !rentalItem) {
-      alert("Keranjang kosong atau data sewa belum lengkap. Kembali ke katalog.");
-      window.location.href = '/products';
-      return;
-    }
+    // Navigasi Step Wizard
+    window.nextStep = (step) => {
+        // Logika tampilan step
+        [1, 2, 3].forEach(n => document.getElementById(`step${n}`).classList.add('hidden'));
+        document.getElementById(`step${step}`).classList.remove('hidden');
+        [1, 2, 3].forEach(n => {
+            const lbl = document.getElementById(`stepLabel${n}`);
+            lbl.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+            if (n <= step) lbl.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+        });
 
-    // 3. Tampilkan Rincian Biaya ke HTML
-    if (rincianContainer) {
-        rincianContainer.innerHTML = `
-          <div class="flex justify-between text-sm text-gray-600"><span>Nama Alat: ${rentalItem.nama}</span><span></span></div>
-          <div class="flex justify-between text-sm text-gray-600"><span>Durasi Sewa (${rentalItem.duration_days} hari)</span><span>Rp ${formatRupiah(totalRentalFee)}</span></div>
-          <div class="flex justify-between text-sm font-semibold text-gray-800"><span>Biaya Mobilisasi (Logistik)</span><span>Rp ${formatRupiah(deliveryFee)}</span></div>
-          <div class="flex justify-between font-bold pt-2 border-t text-gray-800"><span>TOTAL HARGA PENUH</span><span>Rp ${formatRupiah(totalFullTagihan)}</span></div>
-          <div class="mt-4 pt-4 border-t border-gray-300">
-              <div class="flex justify-between text-lg font-bold text-blue-600"><span>UANG MUKA DIBAYAR SEKARANG (50% DP)</span><span>Rp ${formatRupiah(downPayment)}</span></div>
-              <div class="flex justify-between text-sm text-red-600"><span>Sisa Pelunasan</span><span>Rp ${formatRupiah(remainingBalance)}</span></div>
-          </div>
-        `;
-        
-        // Tampilkan Total Transfer
-        if (transferTotalDisplay) {
-            transferTotalDisplay.innerText = `Rp ${formatRupiah(downPayment)}`;
+        // Update Total di Step 3
+        if (step === 3) {
+             document.getElementById('total-transfer-check').textContent = document.getElementById('transfer-total-display').textContent;
         }
-        
-        // Aktifkan tombol konfirmasi
-        if (btnConfirm) btnConfirm.disabled = false;
-    }
+    };
 
 
-    // 4. Klik Tombol "Sudah Transfer" (API Call)
-    if (btnConfirm) {
-      btnConfirm.addEventListener('click', async () => {
-        if (!user) {
-          alert("Anda belum login!");
-          window.location.href = '/login';
-          return;
-        }
+    // --- UI & Data Access ---
+    const btnConfirm = document.getElementById('btn-confirm');
+    const rincianContainer = document.getElementById('rincian-biaya-container');
+    const transferTotalDisplay = document.getElementById('transfer-total-display');
+    const warningMulti = document.getElementById('warning-multi');
+    const itemNamaCheckout = document.getElementById('item-nama-checkout');
+    const totalTransferCheck = document.getElementById('total-transfer-check'); 
+    
+    // Form Inputs
+    const inpFile = document.getElementById('inpFile');
+    const inpName = document.getElementById('inpName');
+    const inpProjectLoc = document.getElementById('inpProjectLoc');
 
-        // Payload yang dikirim ke Backend
-        const payload = {
-          user_id: user.id,
-          total_rental_fee: totalRentalFee,
-          delivery_fee: deliveryFee,
-          start_date: rentalItem.start_date,
-          end_date: rentalItem.end_date,
-          down_payment: downPayment,
-          remaining_balance: remainingBalance
-        };
+    // 1. Ambil data User & Cart dari Browser
+    const userId = getUserId();
+    const username = getUsername();
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // 2. Cek Validasi Awal & Redirect jika data kosong
+    if (cart.length === 0 || !userId) {
+      alert("Anda harus login dan keranjang tidak boleh kosong. Kembali ke katalog.");
+      window.location.href = '/products';
+      return;
+    }
+    
+    // Pre-fill nama penyewa dari localStorage
+    if (username) {
+        inpName.value = username;
+    }
 
-        try {
-          const response = await fetch('http://127.0.0.01:5000/api/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+    // --- Perhitungan Multi-Item Cart ---
+    let totalFullTagihan = 0; 
+    let totalRentalFee = 0;
+    let totalDeliveryFee = 0; 
+    let rincianHTML = '';
+    
+    // Loop untuk menghitung total semua item
+    cart.forEach(item => {
+        const itemRentalFee = parseFloat(item.total_rental_fee) || 0; 
+        const itemDeliveryFee = parseFloat(item.delivery_fee) || 0;
+        
+        totalRentalFee += itemRentalFee;
+        totalDeliveryFee += itemDeliveryFee;
+        totalFullTagihan += itemRentalFee + itemDeliveryFee; // Total Tagihan Penuh
+        
+        const endDate = calculateEndDate(item.start_date, item.duration_days);
 
-          const result = await response.json();
+        // Buat rincian per item
+        rincianHTML += `
+            <div class="border p-3 rounded-lg bg-gray-50 dark:bg-neutral-700">
+                <p class="font-bold text-gray-800 dark:text-white">${item.name} (${item.kuantitas} Unit)</p>
+                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <span>Durasi: ${item.duration_text || item.duration_days + ' Hari'}</span>
+                    <span>Rp ${formatRupiah(itemRentalFee)}</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+                    <span>Biaya Mobilisasi/Unit (Est)</span>
+                    <span>Rp ${formatRupiah(itemDeliveryFee)}</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Mulai: ${item.start_date || 'N/A'} | Selesai (Est): ${endDate}</p>
+            </div>
+        `;
+    });
+    
+    // --- TAMPILKAN RINGKASAN AKHIR (TOTAL PENUH) ---
+    
+    // Tampilkan total biaya
+    rincianContainer.innerHTML = rincianHTML;
+    rincianContainer.innerHTML += `
+        <div class="flex justify-between font-bold pt-2 border-t text-gray-800 dark:text-white"><span>SUBTOTAL SEWA MURNI</span><span>Rp ${formatRupiah(totalRentalFee)}</span></div>
+        <div class="flex justify-between font-bold text-red-600"><span>TOTAL LOGISTIK (Est)</span><span>Rp ${formatRupiah(totalDeliveryFee)}</span></div>
+        <div class="flex justify-between font-bold pt-2 border-t text-gray-800 dark:text-white text-xl"><span>TOTAL HARGA PENUH</span><span>Rp ${formatRupiah(totalFullTagihan)}</span></div>
+    `;
 
-          if (response.status === 200 && result.success) {
-            localStorage.removeItem('cart');
-            window.dispatchEvent(new Event('cartUpdated'));
-            window.location.href = '/success';
-          } else {
-            alert("Gagal: " + (result.message || "Kesalahan server saat menyimpan transaksi."));
-          }
+    transferTotalDisplay.innerText = `Rp ${formatRupiah(totalFullTagihan)}`; 
+    btnConfirm.disabled = false;
 
-        } catch (error) {
-          console.error(error);
-          alert("Backend Error! Pastikan 'node server.js' jalan.");
-        }
-      });
-    }
-  });
+
+    // Cek jika keranjang lebih dari satu item, tampilkan warning
+    if (cart.length > 1) {
+        warningMulti.classList.remove('hidden');
+        itemNamaCheckout.textContent = `${cart.length} item. (Menggunakan data item pertama untuk dokumen)`;
+    }
+    
+    // Panggil step awal
+    window.nextStep(1); 
+    
+    // --- Logika Simulasi Pilihan Bank (Opsional, untuk UX) ---
+    document.querySelectorAll('.pay-method').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const bankName = btn.querySelector('p:first-child').textContent;
+            const detailHtml = `
+                <div class="flex items-center gap-4">
+                    <div id="bank-logo" class="w-14 h-10 bg-blue-700 text-white font-bold flex items-center justify-center rounded text-xs">${bankName}</div>
+                    <div>
+                        <p class="font-bold text-gray-800 dark:text-white text-lg">123-456-7890</p>
+                        <p class="text-sm text-gray-500">a.n PT ScrewFast Indonesia</p>
+                    </div>
+                </div>`;
+            document.getElementById('bank-detail-display').innerHTML = detailHtml;
+            
+            // Highlight yang dipilih
+            document.querySelectorAll('.pay-method').forEach(p => p.classList.remove('border-green-500', 'border-2'));
+            btn.classList.add('border-green-500', 'border-2');
+        });
+    });
+    
+    // --- 4. KLIK KONFIRMASI (API Call) ---
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        btnConfirm.innerText = "Memproses Transaksi...";
+        btnConfirm.disabled = true;
+
+        // KARENA BACKEND HANYA MENERIMA SINGLE ITEM + UPLOAD FILE:
+        const itemToCheckout = cart[0]; 
+        
+        const formData = new FormData();
+        
+        // Data Wajib untuk Backend (Ambil dari Item Pertama)
+        formData.append('customer_name', inpName.value);
+        formData.append('project_loc', inpProjectLoc.value);
+        formData.append('product_id', itemToCheckout.id);
+        formData.append('total_rental_fee', totalFullTagihan); // Kirim total penuh tagihan (ANGKA BERSIH)
+        formData.append('start_date', itemToCheckout.start_date);
+        formData.append('duration', itemToCheckout.duration_text || itemToCheckout.duration_days + ' Hari');
+        formData.append('user_id', userId);
+        
+        // Dokumen Upload
+        if (inpFile.files[0]) {
+             formData.append('sim_document', inpFile.files[0]);
+        } else {
+             alert("Mohon upload SIM/SIO.");
+             btnConfirm.innerText = "✅ Konfirmasi & Proses Sewa";
+             btnConfirm.disabled = false;
+             return;
+        }
+        
+        try {
+            // PENTING: Gunakan API_URL yang benar
+            const response = await fetch(`${API_URL}/api/checkout`, {
+                method: 'POST',
+                body: formData // FormData
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Hapus keranjang setelah sukses
+                localStorage.removeItem('cart');
+                window.dispatchEvent(new Event('cartUpdated'));
+                alert(`✅ Transaksi Berhasil! ID Order: ${result.orderId}. Menunggu verifikasi admin.`);
+                window.location.href = '/dashboard'; 
+            } else {
+                alert("Gagal: " + (result.message || "Kesalahan server saat menyimpan transaksi."));
+            }
+
+        } catch (error) {
+            console.error('Backend Error:', error);
+            alert("Backend Error! Pastikan 'node server.js' berjalan dan tidak ada error SQL.");
+        }
+        
+        btnConfirm.innerText = "✅ Konfirmasi & Proses Sewa";
+        btnConfirm.disabled = false;
+
+    });
+
+  });
 </script>

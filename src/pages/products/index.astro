@@ -75,6 +75,10 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
                   <label class="block text-xs font-bold text-gray-500 mb-1">Lokasi Proyek</label>
                   <textarea id="inpAddr" class="w-full border p-2.5 rounded focus:ring-2 focus:ring-blue-500 outline-none" rows="2" placeholder="Alamat Lengkap Proyek" required></textarea>
                </div>
+               <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1">Kuantitas Unit</label>
+                  <input id="inpQty" type="number" value="1" min="1" class="w-full border p-2.5 rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+               </div>
                
                <div class="grid grid-cols-2 gap-3">
                   <div>
@@ -96,12 +100,20 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
                </div>
                
                <div class="bg-gray-50 p-3 rounded text-right border border-gray-200">
-                  <p class="text-xs text-gray-500">Estimasi Biaya:</p>
-                  <span id="totalTxt" class="font-bold text-xl text-blue-700">Rp 0</span>
+                  <p class="text-xs text-gray-500">Estimasi Biaya Sewa:</p>
+                  <span id="rentalTxt" class="font-bold text-lg text-blue-700">Rp 0</span>
                   <p id="discountInfo" class="text-xs text-green-600 font-bold mt-1 hidden">Hemat: Rp 0</p>
+                  <div class="border-t border-gray-300 mt-2 pt-2">
+                     <p class="text-xs text-gray-500">Biaya Logistik:</p>
+                     <p id="logisticTxt" class="font-bold text-blue-700">Rp 0</p>
+                  </div>
+                  <div class="border-t border-gray-300 mt-2 pt-2">
+                     <p class="text-xs text-gray-500">Total Estimasi:</p>
+                     <span id="totalTxt" class="font-bold text-xl text-orange-600">Rp 0</span>
+                  </div>
                </div>
 
-               <button type="button" onclick="nextStep(2)" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition mt-2 shadow-md">Lanjut: Upload Dokumen</button>
+               <button type="button" onclick="nextStep(2)" class="w-full bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-900 transition mt-2 shadow-md">Lanjut: Upload Dokumen</button>
             </div>
 
             <div id="step2" class="hidden space-y-4">
@@ -119,9 +131,20 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
                  </div>
                </div>
 
+               <div class="space-y-3 mt-4">
+                  <label class="flex items-start gap-2 cursor-pointer">
+                     <input type="checkbox" id="chkTerms1" class="mt-1">
+                     <span class="text-xs text-gray-600">Saya menyetujui di RentHeavyPro Syarat dan Ketentuan</span>
+                  </label>
+                  <label class="flex items-start gap-2 cursor-pointer">
+                     <input type="checkbox" id="chkTerms2" class="mt-1">
+                     <span class="text-xs text-gray-600">Saya telah membaca dan menyetujui syarat dan ketentuan yang berlaku di RentHeavyPro.</span>
+                  </label>
+               </div>
+
                <div class="flex gap-3 pt-4">
                   <button type="button" onclick="nextStep(1)" class="w-1/3 bg-gray-200 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Kembali</button>
-                  <button type="button" onclick="nextStep(3)" class="w-2/3 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-md">Lanjut Pembayaran</button>
+                  <button type="button" id="btnContinuePayment" onclick="nextStep(3)" class="w-2/3 bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-900 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>Lanjut Pembayaran</button>
                </div>
             </div>
 
@@ -147,11 +170,30 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
 
                <div class="flex gap-3 mt-6">
                   <button type="button" id="btnBack3" onclick="nextStep(2)" class="w-1/3 bg-gray-200 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Kembali</button>
-                  <button type="submit" id="btnFinalPay" class="w-2/3 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition shadow-md hidden">Saya Sudah Bayar</button>
+                  <button type="submit" id="btnFinalPay" class="w-2/3 bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-900 transition shadow-md hidden">Saya Sudah Bayar</button>
                </div>
             </div>
         </form>
      </div>
+  </div>
+
+  {/* Modal untuk Perjanjian Lengkap */}
+  <div id="termsModal" class="fixed inset-0 z-[9999] hidden bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-xl p-6 dark:bg-neutral-900 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4 sticky top-0 bg-white dark:bg-neutral-900">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white">Perjanjian Sewa-Menyewa Alat Berat</h2>
+        <button type="button" onclick="closeTermsModal()" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+      </div>
+      
+      <div id="termsContent" class="text-sm text-gray-700 dark:text-gray-300 space-y-4 leading-relaxed mb-6">
+        {/* Terms akan dimuat dari JavaScript */}
+      </div>
+
+      <div class="flex gap-3 sticky bottom-0 bg-white dark:bg-neutral-900 pt-4 border-t">
+        <button type="button" onclick="closeTermsModal()" class="w-full bg-gray-200 font-bold py-2 rounded-lg hover:bg-gray-300 transition">Tutup</button>
+        <button type="button" onclick="acceptTermsModal()" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition">Saya Setuju</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -243,6 +285,7 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
     const modal = document.getElementById('rentModal');
     const inpDur = document.getElementById('inpDur');
     const inpType = document.getElementById('inpType');
+    const inpQty = document.getElementById('inpQty');
     const totalTxt = document.getElementById('totalTxt');
     const mPriceRaw = document.getElementById('mPriceRaw');
     const mProductId = document.getElementById('mProductId');
@@ -274,6 +317,7 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
        document.getElementById('btnFinalPay').classList.add('hidden');
        document.getElementById('btnBack3').classList.remove('hidden');
        
+       inpQty.value = 1;
        inpType.value = "Hari"; 
        inpDur.value = 1;
        
@@ -300,29 +344,38 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
        const p = parseInt(mPriceRaw.value);
        let d = parseInt(inpDur.value);
        const t = inpType.value;
-       let total = 0, normalTotal = 0;
+       const q = parseInt(inpQty.value) || 1;
+       let rentalTotal = 0, normalTotal = 0;
 
        if(t === 'Jam') {
-          total = (p / 8) * d;
+          rentalTotal = (p / 8) * d * q;
           discountInfo.classList.add('hidden');
        } else if(t === 'Hari') {
-          total = p * d;
+          rentalTotal = p * d * q;
           discountInfo.classList.add('hidden');
        } else if(t === 'Bulan') {
-          normalTotal = (p * 30) * d;
-          total = normalTotal * 0.9; 
-          discountInfo.innerText = `Hemat: Rp ${(normalTotal - total).toLocaleString()} (Disc 10%)`;
+          normalTotal = (p * 30) * d * q;
+          rentalTotal = normalTotal * 0.9; 
+          discountInfo.innerText = `Hemat: Rp ${(normalTotal - rentalTotal).toLocaleString()} (Disc 10%)`;
           discountInfo.classList.remove('hidden');
        } else if(t === 'Tahun') {
-          normalTotal = (p * 365) * d;
-          total = normalTotal * 0.7;
-          discountInfo.innerText = `Hemat: Rp ${(normalTotal - total).toLocaleString()} (Disc 30%)`;
+          normalTotal = (p * 365) * d * q;
+          rentalTotal = normalTotal * 0.7;
+          discountInfo.innerText = `Hemat: Rp ${(normalTotal - rentalTotal).toLocaleString()} (Disc 30%)`;
           discountInfo.classList.remove('hidden');
        }
-       totalTxt.innerText = `Rp ${parseInt(total).toLocaleString()}`;
+       
+       // Hitung biaya logistik (15% dari rental total)
+       const logisticFee = rentalTotal * 0.15;
+       const grandTotal = rentalTotal + logisticFee;
+       
+       document.getElementById('rentalTxt').innerText = `Rp ${parseInt(rentalTotal).toLocaleString()}`;
+       document.getElementById('logisticTxt').innerText = `Rp ${parseInt(logisticFee).toLocaleString()}`;
+       document.getElementById('totalTxt').innerText = `Rp ${parseInt(grandTotal).toLocaleString()}`;
     }
 
     inpDur.addEventListener('input', calculateTotal);
+    inpQty.addEventListener('input', calculateTotal);
     inpType.addEventListener('change', () => {
         if(inpType.value === 'Jam') { inpDur.value = 50; alert('ℹ️ Sewa Per Jam: Minimal 50 Jam'); }
         else { inpDur.value = 1; }
@@ -374,7 +427,7 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
         formData.append('product_id', mProductId.value);
         formData.append('start_date', document.getElementById('inpDate').value);
         formData.append('duration', `${inpDur.value} ${inpType.value}`);
-        formData.append('total_rental_fee', totalTxt.innerText.replace(/[Rp,.]/g, '').trim());
+        formData.append('total_rental_fee', document.getElementById('totalTxt').innerText.replace(/[Rp,.]/g, '').trim());
         
         // TAMBAHKAN USER ID (PENTING BUAT DASHBOARD USER)
         formData.append('user_id', localStorage.getItem('userId'));
@@ -403,5 +456,112 @@ const pageTitle = "Katalog Unit | RentHeavyPro";
     });
 
     loadProducts();
+
+    // --- TERMS & CONDITIONS MODAL ---
+    const termsText = `PERJANJIAN SEWA-MENYEWA ALAT BERAT (PT RENTHEAVYPRO)
+
+PT RentHeavyPro (selanjutnya disebut "PENYEDIA") dan Pelanggan (selanjutnya disebut "CUSTOMER") dengan ini menyatakan bahwa CUSTOMER akan menyewa alat berat atau unit (selanjutnya disebut "Unit") dari PENYEDIA melalui Aplikasi RentHeavyPro (selanjutnya disebut "Reservasi"). PENYEDIA dengan ini pula menyatakan persetujuannya untuk menyewakan Unit kepada CUSTOMER, dengan syarat dan ketentuan sebagai berikut:
+
+PASAL 1 – KETENTUAN UMUM
+Sewa Unit Alat Berat adalah layanan sewa Unit untuk pemakaian harian, mingguan, bulanan, atau tahunan. Layanan ini umumnya bersifat Lepas Kunci (Self-Operated) oleh operator CUSTOMER.
+
+CUSTOMER wajib melengkapi dokumen-dokumen kelengkapan, terutama legalitas Operator (berupa Surat Izin Operator (SIO) atau SIM B2 Umum yang masih berlaku), sebagaimana dipersyaratkan oleh PENYEDIA pada saat melakukan Reservasi.
+
+CUSTOMER wajib menunjukkan bukti Reservasi dan identitas (KTP/Paspor/ID Card) asli pada saat serah terima, sesuai dengan dokumen yang diberikan kepada pihak PENYEDIA.
+
+Apabila Unit Pengganti Sementara diperjanjikan dalam Perjanjian, maka jika Unit mengalami kerusakan yang tidak disebabkan oleh CUSTOMER dan membutuhkan jangka waktu perbaikan yang signifikan, PENYEDIA akan secepatnya menyediakan Unit Pengganti Sementara kepada CUSTOMER tanpa biaya tambahan, sepanjang kerusakan itu terjadi di wilayah operasional yang terjangkau. Unit Pengganti Sementara merupakan unit setipe/sekelas atau yang tersedia, serta dalam keadaan baik dan layak jalan.
+
+PASAL 2 – MASA SEWA
+CUSTOMER dapat menggunakan Unit terhitung sejak tanggal yang tercantum dalam Reservasi sampai dengan berakhirnya seluruh Reservasi yang dibuatkan oleh CUSTOMER.
+
+PASAL 3 – RESERVASI DAN PEMBATALAN
+CUSTOMER dapat melakukan Reservasi atas penggunaan Unit melalui Aplikasi, atau Call Center, atau email, atau pemesanan langsung di Kantor Cabang PENYEDIA.
+
+CUSTOMER dapat melakukan perubahan durasi sewa Unit atau membatalkan Reservasi, dengan syarat pembatalan atau perubahan dilakukan paling lambat 24 (dua puluh empat) jam sebelum Masa Sewa dimulai.
+
+PASAL 4 – TATA CARA PEMBAYARAN
+Semua biaya sewa ("Biaya Sewa") akan dibayar dimuka oleh CUSTOMER sesuai dengan nominal Total Tagihan Penuh yang tertera pada Reservasi.
+
+Biaya-biaya tambahan yang muncul kemudian (misalnya Biaya Overtime, Kerusakan Klaim Asuransi Risiko Sendiri, atau Biaya Demobilisasi Mendadak) akan ditagih secara terpisah dan wajib dibayar selambat-lambatnya sebelum Masa Sewa berakhir.
+
+Pembayaran Biaya Sewa dan biaya tambahan akan dilakukan oleh CUSTOMER melalui transfer bank ke rekening milik PT RentHeavyPro sebagaimana ditentukan melalui dokumen tagihan.
+
+Kelengkapan dokumen tagihan meliputi: Invoice (Asli), Purchase Order (PO)/Dokumen Reservasi dari CUSTOMER, Lembar Pemeriksaan (Checklist) pada saat serah terima, dan Faktur Pajak (jika diperlukan).
+
+Dalam hal perpanjangan Masa Sewa, CUSTOMER wajib menyerahkan biaya perpanjangan Masa Sewa, setelah menginformasikan kepada PENYEDIA dan tetap memperhatikan ketersediaan Unit.
+
+PASAL 5 – PERUBAHAN DAN PENGAKHIRAN MASA SEWA
+CUSTOMER wajib mengkonfirmasikan perpanjangan Masa Sewa kepada PENYEDIA paling lambat 1 (satu) hari sebelum Masa Sewa berakhir.
+
+Dalam hal CUSTOMER melakukan Pengakhiran Masa Sewa sebelum berakhirnya Masa Sewa ("Pengakhiran Masa Sewa Dipercepat"):
+
+Jika Pengakhiran Masa Sewa Dipercepat dilakukan saat Masa Sewa berjalan, maka Biaya Sewa yang telah dibayarkan tidak dapat dikembalikan.
+
+Jika Pengakhiran Masa Sewa Dipercepat dilakukan sebelum Masa Sewa berjalan (Pembatalan Dini), maka PENYEDIA akan mengembalikan Biaya Sewa (refund) sesuai kebijakan pembatalan yang berlaku.
+
+PENYEDIA berhak mengakhiri Masa Sewa tanpa pemberitahuan terlebih dahulu apabila CUSTOMER melanggar ketentuan dalam Perjanjian ini atau terjadi penyalahgunaan Unit.
+
+PASAL 6 – KEWAJIBAN DAN TANGGUNG JAWAB CUSTOMER
+CUSTOMER dilarang keras mengalihkan, menyewakan lebih lanjut, atau menjaminkan (agunan) Unit kepada Pihak lain.
+
+CUSTOMER bertanggung jawab penuh atas pengoperasian Unit dan wajib memastikan bahwa Unit hanya dioperasikan oleh Operator yang memiliki legalitas sesuai (SIO/SIM B2 Umum) dan sesuai dengan prosedur K3 (Keselamatan dan Kesehatan Kerja).
+
+CUSTOMER dilarang menggunakan Unit untuk tujuan melanggar hukum, kampanye politik, atau aktivitas lain yang dapat merusak citra PENYEDIA.
+
+CUSTOMER wajib menanggung semua biaya operasional di lokasi proyek, termasuk namun tidak terbatas pada bahan bakar, biaya tol, retribusi, dan biaya parkir.
+
+Apabila terjadi kehilangan, kerusakan, atau perubahan pada Unit atau perlengkapannya yang disebabkan oleh kelalaian CUSTOMER, CUSTOMER bertanggung jawab penuh untuk mengganti seluruh kerugian yang dialami oleh PENYEDIA.
+
+Segala risiko dan biaya yang timbul sebagai pelanggaran terhadap Pasal ini menjadi tanggung jawab CUSTOMER.
+
+PASAL 7 – ASURANSI UNIT
+Semua Unit PENYEDIA telah diasuransikan kepada Perusahaan Asuransi yang ditunjuk oleh PENYEDIA dengan Asuransi Comprehensive/All Risk sesuai dengan ketentuan yang tercantum dalam polis asuransi.
+
+Proteksi asuransi dimulai ketika CUSTOMER menerima Unit dan berakhir mengikuti akhir masa sewa.
+
+CUSTOMER wajib menanggung beban biaya Risiko Sendiri (Own Risk/Deductible) yang ditentukan dalam dokumen asuransi untuk setiap klaim kerusakan Unit yang terjadi.
+
+PASAL 8 – KETENTUAN KHUSUS LAYANAN LEPAS KUNCI (SELF-OPERATED)
+CUSTOMER wajib menandatangani atau menyetujui Lembar Pemeriksaan (Checklist) pada saat serah terima Unit.
+
+CUSTOMER bertanggung jawab penuh atas segala tindakan pelanggaran lalu lintas atau regulasi di lokasi proyek yang dilakukan oleh Operator CUSTOMER selama menggunakan Unit.
+
+Pengambilan dan pengembalian Unit mengacu pada lokasi dan jadwal yang disepakati bersama oleh PENYEDIA dan CUSTOMER.
+
+PASAL 9 – KETENTUAN LAIN-LAIN
+Perjanjian ini tunduk pada hukum yang berlaku di Negara Republik Indonesia.
+
+Dalam hal terjadi sengketa/perselisihan, maka akan diselesaikan melalui musyawarah mufakat. Jika tidak tercapai mufakat, Para Pihak sepakat menyelesaikannya di Pengadilan Negeri Jakarta Utara.
+
+Demikian, Perjanjian ini dibuat oleh Para Pihak dan berlaku efektif serta mengikat sejak tanggal Reservasi telah dibayarkan oleh CUSTOMER.`;
+
+    window.showTermsModal = () => {
+      document.getElementById('termsContent').innerText = termsText;
+      document.getElementById('termsModal').classList.remove('hidden');
+    };
+
+    window.closeTermsModal = () => {
+      document.getElementById('termsModal').classList.add('hidden');
+    };
+
+    window.acceptTermsModal = () => {
+      document.getElementById('chkTerms1').checked = true;
+      closeTermsModal();
+      checkTermsCheckboxes();
+    };
+
+    function checkTermsCheckboxes() {
+      const chk1 = document.getElementById('chkTerms1').checked;
+      const chk2 = document.getElementById('chkTerms2').checked;
+      document.getElementById('btnContinuePayment').disabled = !(chk1 && chk2);
+    }
+
+    document.getElementById('chkTerms1').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        showTermsModal();
+      }
+      checkTermsCheckboxes();
+    });
+    document.getElementById('chkTerms2').addEventListener('change', checkTermsCheckboxes);
   </script>
 </MainLayout>
