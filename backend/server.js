@@ -14,17 +14,23 @@ app.use(express.json());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Konfigurasi Database (Mencoba 3307, jika gagal, cek 3306 atau hilangkan port)
+const DB_PORT = 3307; // PORT YANG DIPAKAI OLEH XAMPP ANDA
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
   database: "sdb_rent",
-  port: 3307,
+  port: DB_PORT,
 });
 
 db.connect((err) => {
-  if (err) console.error("❌ Gagal Konek Database:", err.message);
-  else console.log("✅ Terhubung ke Database sdb_rent");
+  if (err) {
+    console.error(`❌ Gagal Konek Database di Port ${DB_PORT}:`, err.message);
+    console.error(
+      "PASTIKAN 1. XAMPP/MySQL SUDAH BERJALAN, DAN 2. PORT DI XAMPP ADALAH 3307.",
+    );
+  } else console.log("✅ Terhubung ke Database sdb_rent");
 });
 
 const uploadDir = path.join(__dirname, "uploads");
@@ -42,7 +48,12 @@ const upload = multer({ storage: storage });
 // API ROUTES
 app.get("/api/products", (req, res) => {
   db.query("SELECT * FROM products", (err, results) => {
-    if (err) return res.status(500).json(err);
+    if (err) {
+      console.error("Error fetching products:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal mengambil data produk." });
+    }
     res.json(results);
   });
 });
@@ -68,7 +79,7 @@ app.post("/api/checkout", upload.single("sim_document"), (req, res) => {
 
   const orderId = "TRX-" + Date.now();
   const status = "PAID_VERIFY";
-  const cleanedTotalFee = String(total_rental_fee).replace(/[^0-9.]/g, ""); // QUERY DIBERSIHKAN (SINGLE-LINE)
+  const cleanedTotalFee = String(total_rental_fee).replace(/[^0-9.]/g, "");
   const sql = `INSERT INTO transactions (order_id, customer_name, project_loc, product_id, total_rental_fee, start_date, duration, ktp_sim_image, status, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   db.query(
@@ -102,17 +113,23 @@ app.post("/api/checkout", upload.single("sim_document"), (req, res) => {
 });
 
 app.get("/api/orders", (req, res) => {
-  // QUERY DIBERSIHKAN (SINGLE-LINE)
   const sql = `SELECT t.*, p.name as item_name, p.image as item_image, t.customer_name, t.ktp_sim_image as document_path FROM transactions t LEFT JOIN products p ON t.product_id = p.id ORDER BY t.created_at DESC`;
   db.query(sql, (err, results) => {
-    if (err) return res.status(500).json(err);
+    if (err) {
+      console.error("Error fetching admin orders:", err);
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Gagal mengambil data pesanan admin.",
+        });
+    }
     res.json(results);
   });
 });
 
-// ✅ FINAL: Mengambil item_price (p.price) dan data unit untuk dashboard user
 app.get("/api/my-orders/:userId", (req, res) => {
-  const { userId } = req.params; // QUERY DIBERSIHKAN (SINGLE-LINE)
+  const { userId } = req.params;
   const sql = `SELECT t.*, p.name as item_name, p.price as item_price, p.image as item_image FROM transactions t LEFT JOIN products p ON t.product_id = p.id WHERE t.user_id = ? ORDER BY t.created_at DESC`;
 
   db.query(sql, [userId], (err, results) => {
@@ -126,7 +143,6 @@ app.get("/api/my-orders/:userId", (req, res) => {
   });
 });
 
-// ✅ FINAL: API Perpanjangan Sewa
 app.post("/api/extend-rental", (req, res) => {
   const { orderId, additionalDuration, additionalFee } = req.body;
 
@@ -151,7 +167,7 @@ app.post("/api/extend-rental", (req, res) => {
     }
     const existingOrder = results[0];
     const currentTotalFee = parseFloat(existingOrder.total_rental_fee) || 0;
-    const newTotalFee = currentTotalFee + parseFloat(additionalFee); // QUERY DIBERSIHKAN (SINGLE-LINE)
+    const newTotalFee = currentTotalFee + parseFloat(additionalFee);
 
     const updateSql = `UPDATE transactions SET duration = CONCAT(duration, ' + ', ?), total_rental_fee = ?, status = 'EXTENDED' WHERE order_id = ?`;
 
@@ -161,10 +177,12 @@ app.post("/api/extend-rental", (req, res) => {
       (err, result) => {
         if (err) {
           console.error("Update error:", err);
-          return res.status(500).json({
-            success: false,
-            message: "Gagal memproses perpanjangan di database",
-          });
+          return res
+            .status(500)
+            .json({
+              success: false,
+              message: "Gagal memproses perpanjangan di database",
+            });
         }
 
         res.json({
@@ -177,7 +195,6 @@ app.post("/api/extend-rental", (req, res) => {
   });
 });
 
-// FINAL: Endpoint Admin untuk Update Status (Verifikasi/Selesai)
 app.post("/api/admin/update-order-status", (req, res) => {
   const { orderId, status } = req.body;
 
@@ -192,10 +209,12 @@ app.post("/api/admin/update-order-status", (req, res) => {
   db.query(sql, [status, orderId], (err, result) => {
     if (err) {
       console.error("Admin Update Error:", err);
-      return res.status(500).json({
-        success: false,
-        message: "Gagal mengupdate status di database.",
-      });
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Gagal mengupdate status di database.",
+        });
     }
     if (result.affectedRows === 0) {
       return res
@@ -210,9 +229,8 @@ app.post("/api/admin/update-order-status", (req, res) => {
   });
 });
 
-// NEW: API Get Invoice Detail
 app.get("/api/invoice/:orderId", (req, res) => {
-  const { orderId } = req.params; // QUERY DIBERSIHKAN (SINGLE-LINE)
+  const { orderId } = req.params;
 
   const sql = `SELECT t.*, p.name as item_name, p.price as item_price, p.image as item_image FROM transactions t LEFT JOIN products p ON t.product_id = p.id WHERE t.order_id = ?`;
 
@@ -250,4 +268,6 @@ app.post("/api/login", (req, res) => {
 });
 
 const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Backend PBI Jalan di Port ${PORT}`));
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(`🚀 Backend PBI Jalan di Port ${PORT}`),
+);
