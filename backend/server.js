@@ -161,12 +161,10 @@ app.post("/api/extend-rental", (req, res) => {
       (err, result) => {
         if (err) {
           console.error("Update error:", err);
-          return res
-            .status(500)
-            .json({
-              success: false,
-              message: "Gagal memproses perpanjangan di database",
-            });
+          return res.status(500).json({
+            success: false,
+            message: "Gagal memproses perpanjangan di database",
+          });
         }
 
         res.json({
@@ -194,12 +192,10 @@ app.post("/api/admin/update-order-status", (req, res) => {
   db.query(sql, [status, orderId], (err, result) => {
     if (err) {
       console.error("Admin Update Error:", err);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Gagal mengupdate status di database.",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Gagal mengupdate status di database.",
+      });
     }
     if (result.affectedRows === 0) {
       return res
